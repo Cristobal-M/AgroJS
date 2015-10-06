@@ -1,0 +1,115 @@
+<div class="container-fluid">
+  <h1 style="display:inline;margin-right:50px">Clientes</h1>
+  <button style="display:inline;top:-7px;position:relative" class="btn btn-primary" ng-click="seleccionarCliente()" data-toggle="modal" data-target="#dialogoCliente">
+    Nuevo cliente
+  </button>
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>DNI</th>
+            <th>Nombre</th>
+            <th class="hidden-xs">Direccion</th>
+            <th>Telefono</th>
+            <th>E-Mail</th>
+            <th style="width:1px"></th>
+            <th style="width:1px"></th>
+          </tr>
+        </thead>
+          <tbody class="filasPersonas" id="filasClientes" >
+              <tr ng-repeat="cliente in clientes| orderBy: 'apellidos'">
+                  <td>{{ cliente.dni}}</td>
+                  <td>{{ cliente.nombre + " " + cliente.apellidos}}</td>
+                  <td class="hidden-xs">{{ cliente.direccion}}</td>
+                  <td>{{ cliente.telefono}}</td>
+                  <td>{{ cliente.email}}</td>
+                  <td><button class="btn btn-primary" ng-click="seleccionarCliente(cliente)" data-toggle="modal" data-target="#dialogoFincas">Fincas</button></td>
+                  <td><button class="btn btn-primary" ng-click="seleccionarCliente(cliente)" data-toggle="modal" data-target="#dialogoCliente">Editar</button></td>
+                  <!--td><i class="fa fa-lg fa-cart-plus" ng-click="nuevaVenta($event,cliente)" ></i></td>
+                  <td><i class="fa fa-lg fa-file-text" ng-click="mostrarObservaciones($event,cliente)"></i></td>
+                  <td><i class="fa fa-lg fa-remove"  ng-click="eliminarCliente($event,cliente)" ></i></td-->
+              </tr>
+          </tbody>
+    </table>
+  </div>
+</div>
+<!--Dialogo de info de cliente-->
+<div id="dialogoCliente" class="modal fade"  role="dialog">
+  <div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cliente</h4>
+      </div>
+      <div class="modal-body">
+        <!--############################### FORMULARIO CLIENTE ###################################### -->
+        <div class="row">
+          <div class="form-group col-md-4 required">
+              <label class="control-label">Nombre</label>
+              <input ng-model="clienteSeleccionado.nombre" type="text" class="form-control" name="nombre" placeholder="Nombre">
+          </div>
+
+          <div class="form-group col-md-8 required">
+              <label>Apellidos</label>
+              <input ng-model="clienteSeleccionado.apellidos" type="text" class="form-control" name="apellidos" placeholder="Primer apellido">
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-4 required">
+              <label>DNI</label>
+              <input ng-model="clienteSeleccionado.dni" type="text" class="form-control" name="dni" placeholder="XXXXXXXXL">
+          </div>
+
+          <div class="form-group col-md-8 required">
+              <label>Direccion</label>
+              <input ng-model="clienteSeleccionado.direccion" type="text" class="form-control" name="direccion" placeholder="Calle...">
+          </div>
+
+          <div class="form-group col-md-4 required">
+              <label>Telefono</label>
+              <input ng-model="clienteSeleccionado.telefono" type="text" class="form-control" name="telefono" placeholder="958...">
+          </div>
+
+          <div class="form-group col-md-4">
+              <label>Correo electronico</label>
+              <input ng-model="clienteSeleccionado.email" type="text" class="form-control" name="correo" placeholder="xxxx@xxx.xx">
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+              <label>Observaciones</label>
+              <textarea rows="4" ng-model="clienteSeleccionado.observaciones" class="form-control" ></textarea>
+          </div>
+        </div>
+    <!--############################### FIN FORMULARIO ###################################### -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" ng-click="guardarCliente('#dialogoCliente')">Guardar</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!--Fin dialogo de info de cliente-->
+
+<div id="dialogoFincas" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cliente</h4>
+      </div>
+      <div class="modal-body">
+        <!--############################### FORMULARIO CLIENTE ###################################### -->
+        <ag-tabla-datos ag-col="infoTablaFincas" ng-model="clienteSeleccionado.fincas" ag-on-save="guardarFinca"></ag-tabla-datos>
+        <!--############################### FIN FORMULARIO ###################################### -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

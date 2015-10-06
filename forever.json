@@ -1,0 +1,8 @@
+{
+    // Comments are supported
+    "uid": "app",
+    "append": true,
+    "watch": true,
+    "script": "bin/www",
+    "sourceDir": "/home/cristobal/workspace/bigagro"
+}
