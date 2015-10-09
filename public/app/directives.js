@@ -7,14 +7,16 @@
       datos: '=ngModel',
       save: '=agOnSave',
       editable: '@agEditable',
-      //Objeto vacio para relaizar un nuevo registro
-      nuevo: '=agNew'
+      //Constructor para un nuevo elemento
+      constructor: '=agConstructor'
 
     },
     link: function(scope, element, attrs) {
       scope.backup={};
+      scope.nuevo={};
       scope.editando=false;
       scope.editable=(scope.editable===undefined)? false : scope.editable;
+      scope.nuevos=(scope.constructor===undefined)? false : true;
       //Cuando cambien los datos se resetea
       /*
       scope.$watch('datos', function() {
@@ -41,7 +43,8 @@
       }
 
       scope.guardarNuevo=function(){
-        scope.save(scope.nuevo, true);
+        var nuevoElemento=new scope.constructor(scope.nuevo);
+        scope.save(nuevoElemento, true);
       }
     },
     template: '<div class="table-responsive"> \
@@ -53,9 +56,9 @@
             </tr> \
           </thead> \
             <tbody> \
-                <tr> \
+                <tr ng-show="nuevos"> \
                   <td ng-repeat="col in datosCol"><input class="form-control" ng-disabled="editando"  ng-model="nuevo[col.var]"  \\></td> \
-                <td></td></tr> \
+                <td><button ng-disabled="editando" class="btn" ng-click="guardarNuevo()"><span class="glyphicon glyphicon-floppy-saved"></span></button></td></tr> \
                 <tr ng-repeat="dat in datos"> \
                     <td ng-hide="dat.editando" ng-repeat="col in datosCol">{{dat[col.var]}}</td> \
                     <td ng-show="dat.editando" ng-repeat="col in datosCol"><input class="form-control" ng-model="dat[col.var]"  \\></td> \

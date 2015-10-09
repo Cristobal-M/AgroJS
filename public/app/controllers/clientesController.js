@@ -20,19 +20,19 @@ app.controller('listaClientesController', ['$scope', '$http','Cliente','Finca',
       */
     };
     $scope.guardarCliente=edicion.guardar;
-
+    $scope.constructorFinca=Finca;
     $scope.cargarFincas=function(cli){
       $scope.clienteSeleccionado=cli;
       cli.fincas=Finca.query({'idCliente': cli_id});
     }
 
     $scope.infoTablaFincas=[{name:'Nombre', var:'nombre'},{name:'Direccion', var:'direccion'}];
-    $scope.guardarFinca=function(f){
+    $scope.guardarFinca=function(f, nuevo){
       console.log(JSON.stringify(f));
       f.$save({'idCliente': $scope.clienteSeleccionado._id},
         //Funcion para caso de exito
         function(e){
-            //Finca guardada etc...
+          if(nuevo) $scope.clienteSeleccionado.fincas.push(f);
         },
         //Funcion en Error
         function(err){

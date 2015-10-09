@@ -104,7 +104,7 @@
       </div>
       <div class="modal-body">
         <!--############################### FORMULARIO CLIENTE ###################################### -->
-        <ag-tabla-datos ag-col="infoTablaFincas" ng-model="clienteSeleccionado.fincas" ag-on-save="guardarFinca"></ag-tabla-datos>
+        <ag-tabla-datos ag-col="infoTablaFincas" ng-model="clienteSeleccionado.fincas" ag-constructor="constructorFinca" ag-on-save="guardarFinca"></ag-tabla-datos>
         <!--############################### FIN FORMULARIO ###################################### -->
       </div>
       <div class="modal-footer">
