@@ -1,6 +1,7 @@
 var app = angular.module("app");
 app.controller('listaClientesController', ['$scope', '$http','Cliente','Finca',
   function ($scope, $http, Cliente, Finca) {
+
     $scope.clientes=Cliente.query();
 
     var edicion=factoriaEdicion(Cliente,function(nuevo, cli){
@@ -27,12 +28,15 @@ app.controller('listaClientesController', ['$scope', '$http','Cliente','Finca',
     }
 
     $scope.infoTablaFincas=[{name:'Nombre', var:'nombre'},{name:'Direccion', var:'direccion'}];
-    $scope.guardarFinca=function(f, nuevo){
+    $scope.guardarFinca=function(f, cb){
       console.log(JSON.stringify(f));
       f.$save({'idCliente': $scope.clienteSeleccionado._id},
         //Funcion para caso de exito
         function(e){
-          if(nuevo) $scope.clienteSeleccionado.fincas.push(f);
+          if(cb){
+            $scope.empleados.push(f);
+            cb();
+          }
         },
         //Funcion en Error
         function(err){

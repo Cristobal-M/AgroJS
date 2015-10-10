@@ -1,22 +1,32 @@
-var app = angular.module("app", ['ngRoute','ngResource','clientesServices']);
+var app = angular.module("app", ['ngRoute','ngResource','clientesServices','empleadosServices','ngSanitize','ui.bootstrap']);
 var viewsDir='/app/views/';
 app.config(['$routeProvider', function($routeProvider) {
    $routeProvider.
 
    when('/clientes', {
       templateUrl: viewsDir+'listaClientes.html',
-      controller: 'listaClientesController'
+      controller: 'listaClientesController',
+      menuActivo: 'clientes'
    }).
 
-   when('/añadirCliente', {
-      templateUrl: viewsDir+'addCliente.html',
-      controller: 'addClienteController'
+   when('/empleados', {
+      templateUrl: viewsDir+'listaEmpleados.html',
+      controller: 'listaEmpleadosController',
+      menuActivo: 'empleados'
    }).
-
+   when('/empleado/:id', {
+      templateUrl: viewsDir+'infoEmpleado.html',
+      controller: 'empleadoController',
+      menuActivo: 'empleados'
+   }).
    otherwise({
       redirectTo: '/'
    });
 }]);
+app.controller('menuController', ['$scope','$route',
+    function ($scope, $route) {
+      $scope.$route=$route;
+    }]);
 
 /*Genera on objeto con dos funciones, seleccionar y guardar. Depende de angular y resource
 Seleccionar registrara y devolvera una referencia a un objeto que se quiere editar

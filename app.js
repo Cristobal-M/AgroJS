@@ -54,7 +54,8 @@ app.use(session({
 
 var seguridad = require('./lib/seguridad');
 //Operaciones relacionadas con clietes
-app.use('/clientes',seguridad.permitirRoles('/login','admin','usuario') , require('./routes/clientes'));
+app.use('/clientes',seguridad.permitirRoles(false,'admin','usuario') , require('./routes/clientes'));
+app.use('/empleados',seguridad.permitirRoles(false,'admin','usuario') , require('./routes/empleados'));
 //Para lo relacionado con el login
 app.use('/login', require('./routes/login'));
 //Index de la web, la propia aplicacion

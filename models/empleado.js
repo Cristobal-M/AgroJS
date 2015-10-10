@@ -16,6 +16,7 @@ var Empleado = module.exports = mongoose.model('Empleado', empleadoSchema);
 
 //Comprobamos que no hay empleados con el mismo dni
 empleadoSchema.path('dni').validate(function (value, respond) {
+  if(value=="") return respond(true);
   value=value.toUpperCase();
   Empleado.findOne({ dni: value }, function (err, emp) {
     if(err) throw err;
@@ -27,5 +28,6 @@ empleadoSchema.path('dni').validate(function (value, respond) {
 }, 'Ya hay un empleado con este dni ');
 //Validar el dni
 empleadoSchema.path('dni').validate(function (value) {
+  if(value=="") return true;
   return DNI.validar(value);
 }, 'El dni no es valido reviselo');

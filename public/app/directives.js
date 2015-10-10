@@ -8,15 +8,19 @@
       save: '=agOnSave',
       editable: '@agEditable',
       //Constructor para un nuevo elemento
-      constructor: '=agConstructor'
-
+      constructor: '=agConstructor',
+      //Botones mostrados al final de cada fila, {fn: <funcion a ejecutar con ng-click funcion(elemento)>, title: <titulo>, content:<contenido del tag button>}
+      buttons: '=agButtons'
     },
     link: function(scope, element, attrs) {
       scope.backup={};
       scope.nuevo={};
       scope.editando=false;
       scope.editable=(scope.editable===undefined)? false : scope.editable;
-      scope.nuevos=(scope.constructor===undefined)? false : true;
+      if(scope.constructor!==undefined){
+        scope.nuevos=true;
+        scope.nuevo=new scope.constructor();
+      }
       //Cuando cambien los datos se resetea
       /*
       scope.$watch('datos', function() {
@@ -44,7 +48,12 @@
 
       scope.guardarNuevo=function(){
         var nuevoElemento=new scope.constructor(scope.nuevo);
-        scope.save(nuevoElemento, true);
+        scope.save(nuevoElemento, function(){
+          scope.nuevo=new scope.constructor();
+        });
+      }
+      scope.html=function(c){
+        return c;
       }
     },
     template: '<div class="table-responsive"> \
@@ -62,7 +71,10 @@
                 <tr ng-repeat="dat in datos"> \
                     <td ng-hide="dat.editando" ng-repeat="col in datosCol">{{dat[col.var]}}</td> \
                     <td ng-show="dat.editando" ng-repeat="col in datosCol"><input class="form-control" ng-model="dat[col.var]"  \\></td> \
-                    <td ng-hide="editando && dat.editando" style="visibility:{{(editando)?\'hidden\':\'\' }}"><button class="btn" ng-click="editar(dat)"><span class="glyphicon glyphicon-pencil"></span></button></td> \
+                    <td ng-hide="editando && dat.editando" style="visibility:{{(editando)?\'hidden\':\'\' }}"> \
+                      <button ng-hide="dat.editando || !buttons" ng-repeat="b in buttons" class="btn" ng-click="b.fn(dat)" title="b.title" ng-bind-html="html(b.content)"></button> \
+                      <button class="btn" ng-click="editar(dat)"><span class="glyphicon glyphicon-pencil"></span></button> \
+                    </td> \
                     <td ng-show="dat.editando"> \
                       <button class="btn" ng-click="guardar(dat)"><span class="glyphicon glyphicon-floppy-saved"></span></button> \
                       <button class="btn" ng-click="cancelar(dat)"><span class="glyphicon glyphicon-remove"></span></button> \

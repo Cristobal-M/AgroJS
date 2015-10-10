@@ -22,11 +22,17 @@ clientesServices.factory('Finca', ['$resource',
   }
 ]);
 
-clientesServices.factory('BuscarClientes', ['$resource',
+
+//////////////////////////////////////////////////////////////////////////////////
+//EMPLEADOS
+var empleadosServices = angular.module('empleadosServices', ['ngResource']);
+
+empleadosServices.factory('Empleado', ['$resource',
   function($resource){
-    //Para realizar una busqueda, de los que haya una coincidencia con el nombre y apellidos o dni
-    return $resource('/clientes/:nombre/:dni', {},
-      { query: {method:'GET', params:{nombre:'_',dni:'_'}, isArray:true} }
+    return $resource('/empleados/:id', {id: ''},
+      { query: {method:'GET', isArray:true},
+        get: {method:'GET'}
+      }
     );
   }
 ]);
