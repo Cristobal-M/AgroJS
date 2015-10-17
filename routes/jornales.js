@@ -6,16 +6,24 @@ var debug = require('debug')('agrojs:jornales');
 var moment = require('moment');
 
 //Fechas para la pericion ISO 8601 (YYYY-MM-DD)
-router.get('/:idFinca/:fecha/', function(req, res, next) {
+router.get('/', function(req, res, next) {
   debug('listado jornales solicitado para el '+req.params.fecha+' para la finca con id '+req.params.idFinca);
-  var fecha=moment(req.params.fecha, 'YYYY-MM-DD');
-  if(!fecha.isValid()){
-    debug('la fecha no es valida se cancela');
-    res.status(400);
-    res.json({ok: false, msg: 'La fecha no es valida'});
-    return;
+  var finca=req.params.finca;
+  var fecha=req.params.fecha;
+  var empleado=req.params.empleado;
+  var busqueda={};
+  if(fecha!==undefined){
+    fecha=moment(fecha, 'YYYY-MM-DD');
+    if(!fecha.isValid()){
+      debug('la fecha no es valida se cancela');
+      res.status(400);
+      res.json({ok: false, msg: 'La fecha no es valida'});
+      return;
+    }
+    busqueda.fecha=fecha.toDate();
   }
-  var busqueda={finca: req.params.idFinca, fecha: fecha.toDate()};
+  if(finca!==undefined) busqueda.finca=finca;
+  if(empleado!==undefined) busqueda.empleado=empleado;
 
   Jornal.find(busqueda, function(err, e) {
     if (err) throw err;
@@ -24,9 +32,9 @@ router.get('/:idFinca/:fecha/', function(req, res, next) {
 
 });
 
-router.post('/:idFinca/:fecha/', function(req, res, next) {
+router.post('/', function(req, res, next) {
   debug('guardado de un jornal solicitado:' +JSON.stringify(req.body));
-  var fecha=moment(req.params.fecha, 'YYYY-MM-DD');
+  var fecha=moment(req.body.fecha);
   if(!fecha.isValid()){
     debug('la fecha no es valida se cancela');
     res.status(400);
