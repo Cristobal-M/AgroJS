@@ -19,6 +19,11 @@ app.config(['$routeProvider', function($routeProvider) {
       controller: 'empleadoController',
       menuActivo: 'empleados'
    }).
+   when('/jornales', {
+      templateUrl: viewsDir+'tablaJornales.html',
+      controller: 'jornalesController',
+      menuActivo: 'jornales'
+   }).
    otherwise({
       redirectTo: '/'
    });

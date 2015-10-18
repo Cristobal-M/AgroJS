@@ -85,3 +85,85 @@
     </div>'
   };
 });
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+angular.module("app").directive('agJornal',['Jornal', function(Jornal) {
+ return {
+   restrict: 'E',
+   transclude: true,
+   scope: {
+     jornales: '=agJornales',
+     orden: '=agOrden',
+     trabajador: '=agTrabajador',
+     temporada: '=agTemporada',
+     cliente: '=agCliente',
+     finca: '=agFinca'
+   },
+   link: function(scope, element, attrs) {
+     var colors=['', '#FF4747', '#51FF47'];
+     scope.color=colors[0];
+     scope.backup={};
+     scope.jornal=scope.jornales[scope.trabajador];
+     scope.nuevo=(scope.jornal!==undefined)? false : true;
+     console.log(scope.trabajador);
+     scope.iniciarEdicion=function(){
+       if(scope.nuevo){
+         scope.jornal=new Jornal();
+         scope.jornal.empleado=scope.trabajador;
+         scope.jornal.temporada=scope.temporada._id;
+         scope.jornal.cliente=scope.cliente;
+         scope.jornal.finca=scope.finca;
+         console.log("jornal nuevo"+JSON.stringify(scope.jornal));
+       }
+       scope.backup=angular.copy(scope.jornal);
+       scope.editando=true;
+     }
+
+     scope.cancelarEdicion=function(){
+       angular.copy(scope.backup, scope.jornal);
+       scope.editando=true;
+     }
+     scope.guardarJornal=function(){
+       console.log("guardando jornal"+JSON.stringify(scope.jornal));
+       scope.jornal.$save(
+         function(e){
+           if(scope.nuevo)
+            scope.jornales[scope.trabajador]=e;
+           scope.editando=false;
+           scope.color=colors[2];
+         },
+         function(e){
+           scope.color=colors[1];
+           alert(e.msg);
+         }
+       );
+     };
+     scope.$watch(
+       'orden',
+        function(newValue, oldValue) {
+          //console.log(8888888);
+          if ( newValue !== oldValue ) {
+            switch (newValue) {
+              case 'editar':
+                scope.iniciarEdicion();
+                break;
+              case 'guardar':
+                scope.guardarJornal();
+                break;
+              case 'cancelar':
+                scope.cancelarEdicion();
+            }
+          }
+        }
+      );
+
+   },
+   template:
+   '<div style="background-color:{{color}}"> {{orden}}\
+     <input ng-model="jornal.horas" type="number"> \
+     <select ng-model="jornal.puesto" multiple> \
+        <option ng-repeat="puesto in temporada.puestos" value="{{puesto}}">{{puesto.nombre+" "+puesto.coste_hora}}</option> \
+     </select> \
+   </div>'
+ };
+}]);

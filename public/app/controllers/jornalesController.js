@@ -1,37 +1,27 @@
 var app = angular.module("app");
-app.controller('jornalesController', ['$scope', '$http', 'Jornal', 'Temporada', 'EmpleadosActivos',
-  function ($scope, $http, Jornal, Temporada, EmpleadosActivos) {
-    $scope.empleadosActivos=EmpleadosActivos.query();
+app.controller('jornalesController', ['$scope', '$http', 'Jornal', 'Temporada', 'Cliente', 'EmpleadosActivos','Finca',
+  function ($scope, $http, Jornal, Temporada, Cliente, EmpleadosActivos, Finca) {
+    var empleadosActivos=EmpleadosActivos.query();
+    $scope.clientes=Cliente.query();
+    $scope.temporada={};
+    $scope.cliente={};
+    $scope.finca={};
 
-    $scope.fechaFin=new Date();
-    $scope.fechaInicio=new Date($scope.fechaFin.toDate()-5);
-
-    $scope.hoy = function() {
-      $scope.fechaHoy = new Date();
-    };
-    $scope.hoy();
-
-    $scope.constructorEmpleado=Empleado;
-    $scope.infoTablaEmpleados=[
-      {name:'DNI', var:'dni'},
+    $scope.Temporada=Temporada;
+    $scope.temporadas=Temporada.query(function(e){console.log(JSON.stringify(e))});
+    $scope.infoTablaTemporadas=[
       {name:'Nombre', var:'nombre'},
-      {name:'Apellidos', var:'apellidos'},
-      {name:'Telefono', var:'telefono'},
-      {name:'Direccion', var:'direccion'}
+      {name:'Inicio', var:'inicio'},
+      {name:'Fin', var:'fin'}
     ];
-    $scope.prueba="----";
 
-
-    $scope.botonesTablaEmpleados=[
-      {fn:function(e){ window.location="#/empleado/"+e._id; }, content:'<span class="glyphicon glyphicon-info-sign"></span>'}
-    ];
-    $scope.guardarEmpleado=function(f, cb){
-      console.log(JSON.stringify(f));
-      f.$save(
+    $scope.guardarTemporada=function(tmp, cb){
+      console.log(JSON.stringify(tmp));
+      tmp.$save(
         //Funcion para caso de exito
         function(e){
           if(cb){
-            $scope.empleados.push(f);
+            $scope.temporadas.push(e);
             cb();
           }
         },
@@ -43,81 +33,60 @@ app.controller('jornalesController', ['$scope', '$http', 'Jornal', 'Temporada', 
           console.log(JSON.stringify(err));
         }
       );
-      console.log("guardar empleado terminado");
+      console.log("guardar temporada terminado");
+    };
+
+    $scope.fechaFin=new Date();
+    $scope.fechaInicio=new Date().setDate($scope.fechaFin.getDate()-5);
+
+    $scope.getFincas=function(idC){
+      console.log(idC);
+      $scope.fincas=Finca.query({'idCliente': idC});
     }
-  }]);
 
-app.controller('empleadoController', ['$scope', '$http','$routeParams','Empleado',
-    function ($scope, $http, $routeParams, Empleado) {
-      var id=$routeParams.id;
-      $scope.empleado=Empleado.get({'id': id});
+    $scope.getJornales=function(){
+      /*
+      var jornalesDia= Jornal.query(
+        {'fecha': $scope.fechaInicio, 'finca': finca, 'temporada': temporada},
+        function(jj){
+          console.log(JSON.stringify(jj));
+        }
+      );
 
+      return 0;
+      */
+      $scope.empleados=empleadosActivos;
+      var jornales=$scope.jornales={};
+      var finca=$scope.finca;
+      var temporada=$scope.temporada;
 
-      $scope.today = function() {
-  $scope.dt = new Date();
-};
-$scope.today();
-
-$scope.clear = function () {
-  $scope.dt = null;
-};
-
-// Disable weekend selection
-$scope.disabled = function(date, mode) {
-  return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
-};
-
-$scope.toggleMin = function() {
-  $scope.minDate = $scope.minDate ? null : new Date();
-};
-$scope.toggleMin();
-$scope.maxDate = new Date(2020, 5, 22);
-
-$scope.open = function($event) {
-  $scope.status.opened = true;
-};
-
-$scope.dateOptions = {
-  formatYear: 'yy',
-  startingDay: 1
-};
-
-$scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-$scope.format = $scope.formats[0];
-
-$scope.status = {
-  opened: false
-};
-
-var tomorrow = new Date();
-tomorrow.setDate(tomorrow.getDate() + 1);
-var afterTomorrow = new Date();
-afterTomorrow.setDate(tomorrow.getDate() + 2);
-$scope.events =
-  [
-    {
-      date: tomorrow,
-      status: 'full'
-    },
-    {
-      date: afterTomorrow,
-      status: 'partially'
-    }
-  ];
-
-$scope.getDayClass = function(date, mode) {
-  if (mode === 'day') {
-    var dayToCheck = new Date(date).setHours(0,0,0,0);
-
-    for (var i=0;i<$scope.events.length;i++){
-      var currentDay = new Date($scope.events[i].date).setHours(0,0,0,0);
-
-      if (dayToCheck === currentDay) {
-        return $scope.events[i].status;
+      var fechaFin=moment($scope.fechaFin);
+      var fechaInicio=moment($scope.fechaInicio);
+      var fechaActual=moment(fechaInicio);
+      var num=Math.abs(fechaInicio.diff(fechaFin,'days'));
+      $scope.fechas=[];
+      $scope.ordenes=[];
+      console.log(num);
+      for (var i = 0; i<=num; i++) {
+        var f=fechaActual.format("DD-MM-YYYY");
+        console.log(f);
+        $scope.fechas.push(f);
+        var aux={};
+        aux[f]='_';
+        $scope.ordenes.push(aux);
+        jornales[f]={};
+        var jornalesDia= Jornal.query(
+          {'fecha': f, 'finca': finca, 'temporada': temporada},
+          function(jd){
+            for (var j in jd) {
+              if(j.empleado!==undefined)
+              jornales[f][j.empleado]=j;
+            }
+          }
+        );
+        fechaActual.add(1,'days');
       }
-    }
-  }
 
-  return '';
-};
-    }]);
+    }
+
+  }]);

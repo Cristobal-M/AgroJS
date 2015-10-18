@@ -1,7 +1,7 @@
 0 info it worked if it ends with ok
 1 verbose cli [ '/usr/bin/nodejs', '/usr/bin/npm', 'start' ]
 2 info using npm@2.14.4
-3 info using node@v4.1.1
+3 info using node@v4.1.2
 4 verbose run-script [ 'prestart', 'start', 'poststart' ]
 5 info prestart agrojs@0.0.0
 6 info start agrojs@0.0.0
@@ -15,13 +15,13 @@
 9 verbose stack     at ChildProcess.<anonymous> (/usr/lib/node_modules/npm/lib/utils/spawn.js:24:14)
 9 verbose stack     at emitTwo (events.js:87:13)
 9 verbose stack     at ChildProcess.emit (events.js:172:7)
-9 verbose stack     at maybeClose (internal/child_process.js:817:16)
+9 verbose stack     at maybeClose (internal/child_process.js:818:16)
 9 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
 10 verbose pkgid agrojs@0.0.0
 11 verbose cwd /home/cristobal/workspace/agrojs
-12 error Linux 3.13.0-65-generic
+12 error Linux 3.19.0-30-generic
 13 error argv "/usr/bin/nodejs" "/usr/bin/npm" "start"
-14 error node v4.1.1
+14 error node v4.1.2
 15 error npm  v2.14.4
 16 error code ELIFECYCLE
 17 error agrojs@0.0.0 start: `node ./bin/www`

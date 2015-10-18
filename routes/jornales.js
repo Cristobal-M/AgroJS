@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var errores= require('../lib/errores');
 var Jornal=require('../models/jornal');
+var Temporada=require('../models/temporada');
 var debug = require('debug')('agrojs:jornales');
 var moment = require('moment');
 
@@ -73,9 +74,49 @@ router.post('/', function(req, res, next) {
 
     });
   }
-
-
 });
 
+router.get('/temporadas', function(req, res, next) {
+  debug('listado de temporadas');
+  Temporada.find({}, function(err, e) {
+    if (err) throw err;
+    res.json(e);
+  });
+});
+
+router.post('/temporadas', function(req, res, next) {
+  debug('guardado de una temporada solicitada');
+  var id=req.body._id;
+  if(id!==undefined){
+    debug('la temporada ya existe se editara');
+    Temporada.findOne({},function(err, temp) {
+      if (err) return next(err);
+      temp.set(req.body);
+      temp.save(function(err, jornal) {
+        if (err){
+          debug(JSON.stringify(err));
+          errores.tratarError(err,res,next);
+          return;
+        }
+        debug('temporada editado');
+        res.json(temp);
+
+      });
+    });
+  }
+  else{
+    debug('la temporada no existe se crea uno nuevo');
+    var temp=new Temporada(req.body);
+    temp.save(function(err) {
+      if (err){
+        debug(JSON.stringify(err));
+        errores.tratarError(err,res,next);
+        return;
+      }
+      debug('temporada guardado');
+      res.json(temp);
+    });
+  }
+});
 
 module.exports = router;

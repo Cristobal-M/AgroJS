@@ -36,3 +36,33 @@ empleadosServices.factory('Empleado', ['$resource',
     );
   }
 ]);
+
+empleadosServices.factory('EmpleadosActivos', ['$resource',
+  function($resource){
+    return $resource('/empleados/activos', {},
+      { query: {method:'GET', isArray:true},
+        get: {method:'GET'}
+      }
+    );
+  }
+]);
+
+empleadosServices.factory('Jornal', ['$resource',
+  function($resource){
+    return $resource('/jornales', {},
+      { query: {method:'GET', isArray:true},
+        get: {method:'GET'}
+      }
+    );
+  }
+]);
+
+empleadosServices.factory('Temporada', ['$resource',
+  function($resource){
+    return $resource('/jornales/temporadas', {},
+      { query: {method:'GET', isArray:true},
+        get: {method:'GET'}
+      }
+    );
+  }
+]);

@@ -20,7 +20,17 @@ router.get('/', function(req, res, next) {
   }
 
   Empleado.find(busqueda, 'nombre apellidos direccion email dni observaciones telefono', function(err, empleados) {
-    if (err) throw err;
+    if (err) return next(err);
+    res.json(empleados);
+  });
+
+});
+
+router.get('/activos', function(req, res, next) {
+  debug('listado empleados activos solicitado');
+
+  Empleado.find({}, 'nombre apellidos dni', function(err, empleados) {
+    if (err) return next(err);
     res.json(empleados);
   });
 
@@ -63,11 +73,12 @@ router.post('/', function(req, res, next) {
 
 
 });
+
 router.get('/:idEmpleado', function(req, res, next) {
   debug('empleado solicitado');
 
   Empleado.findOne({_id: req.params.idEmpleado}, function(err, empleado) {
-    if (err) throw err;
+    if (err) return next(err);
     res.json(empleado);
   });
 
@@ -78,10 +89,14 @@ router.get('/:idEmpleado/jornales', function(req, res, next) {
   var busqueda={};
 
   Jornal.find(busqueda, function(err, jornales) {
-    if (err) throw err;
+    if (err) return next(err);
     res.json(jornales);
   });
 
 });
+
+
+
+
 
 module.exports = router;

@@ -65,15 +65,11 @@ router.post('/', function(req, res, next) {
 
 });
 
-router.get('/:id', function(req, res, next) {
-  Cliente.findOne({'_id':req.params.id}, function(err, cliente) {
-    if (err) throw err;
-    res.json(cliente);
-  });
 
-});
 
 router.get('/:id/fincas', function(req, res, next) {
+  if(req.params.id===undefined)
+    return res.json([]);
   Cliente.findOne({'_id':req.params.id}, function(err, cliente) {
     if (err) throw err;
     res.json(cliente.fincas);
@@ -114,7 +110,13 @@ router.post('/:id/fincas', function(req, res, next) {
   });
 });
 
+router.get('/:id', function(req, res, next) {
+  Cliente.findOne({'_id':req.params.id}, function(err, cliente) {
+    if (err) return next(err);
+    res.json(cliente);
+  });
 
+});
 
 router.get('/crear', function(req, res, next) {
   //res.render('index', { title: 'Express' });
