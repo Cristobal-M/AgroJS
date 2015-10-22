@@ -47,7 +47,7 @@
       }
 
       scope.guardarNuevo=function(){
-        var nuevoElemento=new scope.constructor(scope.nuevo);
+        var nuevoElemento=angular.copy(scope.nuevo);
         scope.save(nuevoElemento, function(){
           scope.nuevo=new scope.constructor();
         });
@@ -73,7 +73,7 @@
                     <td ng-show="dat.editando" ng-repeat="col in datosCol"><input class="form-control" ng-model="dat[col.var]"  \\></td> \
                     <td ng-hide="editando && dat.editando" style="visibility:{{(editando)?\'hidden\':\'\' }}"> \
                       <button ng-hide="dat.editando || !buttons" ng-repeat="b in buttons" class="btn" ng-click="b.fn(dat)" title="b.title" ng-bind-html="html(b.content)"></button> \
-                      <button class="btn" ng-click="editar(dat)"><span class="glyphicon glyphicon-pencil"></span></button> \
+                      <button ng-show="editable" class="btn" ng-click="editar(dat)"><span class="glyphicon glyphicon-pencil"></span></button> \
                     </td> \
                     <td ng-show="dat.editando"> \
                       <button class="btn" ng-click="guardar(dat)"><span class="glyphicon glyphicon-floppy-saved"></span></button> \
@@ -93,26 +93,61 @@ angular.module("app").directive('agJornal',['Jornal', function(Jornal) {
    transclude: true,
    scope: {
      jornales: '=agJornales',
+     dia: '=agDia',
      orden: '=agOrden',
-     trabajador: '=agTrabajador',
      temporada: '=agTemporada',
-     cliente: '=agCliente',
-     finca: '=agFinca'
+     idTrabajador: '=agIdTrabajador',
+     idCliente: '=agIdCliente',
+     idFinca: '=agIdFinca'
    },
    link: function(scope, element, attrs) {
      var colors=['', '#FF4747', '#51FF47'];
+     var jornales=scope.jornales[scope.dia];
+     var backupJornal={};
+
      scope.color=colors[0];
-     scope.backup={};
-     scope.jornal=scope.jornales[scope.trabajador];
-     scope.nuevo=(scope.jornal!==undefined)? false : true;
-     console.log(scope.trabajador);
+     scope.jornal=jornales[scope.idTrabajador];
+     //scope.puestos=angular.copy(scope.temporada.puestos);
+     scope.puestos=scope.temporada.puestos;
+     scope.editando=false;
+     //var nuevoJornal=true;
+     var nuevoJornal=scope.jornal===undefined;
+/*
+     if(scope.jornal!==undefined){
+       nuevoJornal=false;
+       var pj=scope.jornal.puesto;
+       var existePuesto=false;
+       for (var i = 0; i < scope.puestos.length; i++) {
+         var p=scope.puestos[i];
+         if( (p.nombre+p.coste_hora)===(pj.nombre+pj.coste_hora) ){
+           existePuesto=true;
+           break;
+         }
+       }
+       if(!existePuesto)
+        scope.puestos.push(pj);
+     }
+
+*/
+     scope.$watch(
+       function(){return scope.jornales[scope.dia][scope.idTrabajador]; },
+        function(newValue, oldValue) {
+          //console.log(8888888);
+          if ( newValue !== oldValue && jornales[scope.idTrabajador]!==undefined && nuevoJornal) {
+            nuevoJornal=false;
+            scope.jornal=jornales[scope.idTrabajador];
+          }
+        }
+      );
+
      scope.iniciarEdicion=function(){
-       if(scope.nuevo){
+       if(nuevoJornal){
          scope.jornal=new Jornal();
-         scope.jornal.empleado=scope.trabajador;
+         scope.jornal.empleado=scope.idTrabajador;
          scope.jornal.temporada=scope.temporada._id;
-         scope.jornal.cliente=scope.cliente;
-         scope.jornal.finca=scope.finca;
+         scope.jornal.cliente=scope.idCliente;
+         scope.jornal.finca=scope.idFinca;
+         scope.jornal.fecha=scope.dia;
          console.log("jornal nuevo"+JSON.stringify(scope.jornal));
        }
        scope.backup=angular.copy(scope.jornal);
@@ -121,9 +156,15 @@ angular.module("app").directive('agJornal',['Jornal', function(Jornal) {
 
      scope.cancelarEdicion=function(){
        angular.copy(scope.backup, scope.jornal);
-       scope.editando=true;
+
+       scope.editando=false;
      }
      scope.guardarJornal=function(){
+
+       if(scope.jornal.horas===undefined || scope.jornal.horas===0){
+         scope.editando=false;
+         return;
+       }
        console.log("guardando jornal"+JSON.stringify(scope.jornal));
        scope.jornal.$save(
          function(e){
@@ -138,6 +179,7 @@ angular.module("app").directive('agJornal',['Jornal', function(Jornal) {
          }
        );
      };
+     //La variable scope.orden se usa para realizar determinadas acciones
      scope.$watch(
        'orden',
         function(newValue, oldValue) {
@@ -159,10 +201,9 @@ angular.module("app").directive('agJornal',['Jornal', function(Jornal) {
 
    },
    template:
-   '<div style="background-color:{{color}}"> {{orden}}\
-     <input ng-model="jornal.horas" type="number"> \
-     <select ng-model="jornal.puesto" multiple> \
-        <option ng-repeat="puesto in temporada.puestos" value="{{puesto}}">{{puesto.nombre+" "+puesto.coste_hora}}</option> \
+   '<div style="background-color:{{color}}"> \
+     <input ng-disabled="!editando" class="form-control" ng-model="jornal.horas" type="number"> <br>\
+     <select ng-disabled="!editando" class="form-control" ng-model="jornal.puesto" ng-options="p.propio+p.nombre+\' \'+p.coste_hora+\'€/h\' for p in puestos track by p.nombre+p.coste_hora"> \
      </select> \
    </div>'
  };
