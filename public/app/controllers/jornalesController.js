@@ -68,7 +68,7 @@ app.controller('jornalesController', ['$scope', '$http', 'Jornal', 'Temporada', 
       $scope.ordenes=[];
       console.log(num);
       for (var i = 0; i<=num; i++) {
-        var f=fechaActual.format("DD-MM-YYYY");
+        var f=fechaActual.format("YYYY-MM-DD");
         console.log(f);
         $scope.fechas.push(f);
         var aux={};
@@ -76,11 +76,13 @@ app.controller('jornalesController', ['$scope', '$http', 'Jornal', 'Temporada', 
         $scope.ordenes.push(aux);
         jornales[f]={};
         var jornalesDia= Jornal.query(
-          {'fecha': f, 'finca': finca, 'temporada': temporada},
+          {'fecha': f, 'finca': finca._id, 'temporada': temporada._id},
           function(jd){
-            for (var j in jd) {
-              if(j.empleado!==undefined)
-              jornales[f][j.empleado]=j;
+            console.log(JSON.stringify(jd));
+            for (var j=0;j<jd.length;j++) {
+              var jornal_aux=jd[j];
+              if(jornal_aux.empleado!==undefined)
+              jornales[moment.utc(jornal_aux.fecha).format('YYYY-MM-DD')][jornal_aux.empleado]=angular.copy(jornal_aux);
             }
           }
         );

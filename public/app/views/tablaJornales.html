@@ -1,24 +1,67 @@
 <div class="container-fluid">
   <h1 style="display:inline;margin-right:50px">Jornales</h1>
 
+<!--############################################################################################-->
+<div ng-controller="temporadasController">
   <button class="btn btn-primary" data-toggle="modal" data-target="#dialogoTemporadas">
     Temporadas
   </button>
 
+  <div id="dialogoTemporadas" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Temporadas</h4>
+        </div>
+        <div class="modal-body">
+          <!--############################### FORMULARIO CLIENTE ###################################### -->
+          <ag-tabla-datos ag-col="infoTablaTemporadas" ng-model="temporadas" ag-constructor="Temporada" ag-on-save="guardarTemporada" ag-buttons="botonesTablaTemporadas"></ag-tabla-datos>
+          <!--############################### FIN FORMULARIO ###################################### -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="{{idDialogoPuestos}}" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Puestos</h4>
+        </div>
+        <div class="modal-body">
+          <!--############################### PUESTOS ###################################### -->
+          <ag-tabla-datos ag-col="infoTablaPuestos" ng-model="temporadaSeleccionada.puestos" ag-constructor="ObjetoVacio" ag-on-save="guardarTemporadaPuestos" ></ag-tabla-datos>
+          <!--############################### FIN  ###################################### -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!--############################################################################################-->
   <form class="form-inline" role="form" style="margin:10px">
     <div class="form-group">
-      <select class="form-control" ng-model="temporada">
+      <select class="form-control" ng-model="temporada" ng-options="temp.nombre+' '+temp.inicio+'-'+temp.fin for temp in temporadas">
         <option ng-repeat="temp in temporadas" value="{{temp}}">{{temp.nombre+" "+temp.inicio+"-"+temp.fin}}</option>
       </select>
     </div>
     <div class="form-group">
-      <select class="form-control" ng-model="idCliente" ng-change="getFincas(idCliente)">
-        <option ng-repeat="cl in clientes" value="{{cl._id}}">{{cl.nombre+" "+cl.apellidos}}</option>
+      <select class="form-control" ng-model="cliente" ng-change="getFincas(cliente._id)" ng-options="cl.nombre+' '+cl.apellidos for cl in clientes">
       </select>
     </div>
     <div class="form-group">
-      <select class="form-control" ng-model="idFinca">
-        <option ng-repeat="finca in fincas" value="{{finca._id}}">{{finca.nombre}}</option>
+      <select class="form-control" ng-model="finca" ng-options="f.nombre for f in fincas">
       </select>
     </div>
 
@@ -48,8 +91,8 @@
           <tr>
             <th>Empleado</th>
             <th ng-repeat="fecha in fechas">
-              {{fecha}}<button ng-hide="ordenes[fecha]==='editar'" ng-click="ordenes[fecha]='editar'">E</button>
-              <button ng-show="ordenes[fecha]==='editar'" ng-click="ordenes[fecha]='cancelar'; ordenes[fecha]='_'">C</button>
+              {{fecha | date:"dd/MM/yyyy" }}<button ng-hide="ordenes[fecha]==='editar'" ng-click="ordenes[fecha]='editar'">E</button>
+              <button ng-show="ordenes[fecha]==='editar'" ng-click="ordenes[fecha]='cancelar'">C</button>
               <button ng-show="ordenes[fecha]==='editar'" ng-click="ordenes[fecha]='guardar'">G</button>
             </th>
           </tr>
@@ -58,31 +101,11 @@
               <tr ng-repeat="emp in empleados">
                   <td>{{ emp.nombre}} {{ emp.apellidos}}</td>
                   <td ng-repeat="fecha in fechas">
-                    <ag-jornal ag-jornales="jornales[fecha]" ag-orden="ordenes[fecha]" ag-trabajador="emp._id" ag-temporada="temporada" ag-finca="idFinca" ag-cliente="idCliente"></ag-jornal>
+                    <ag-jornal ag-jornales="jornales" ag-dia="fecha" ag-orden="ordenes[fecha]" ag-id-trabajador="emp._id" ag-temporada="temporada" ag-id-finca="finca._id" ag-id-cliente="cliente._id"></ag-jornal>
                   </td>
 
               </tr>
           </tbody>
     </table>
-  </div>
-</div>
-
-<div id="dialogoTemporadas" class="modal fade" role="dialog">
-  <div class="modal-dialog modal-lg">
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Temporadas</h4>
-      </div>
-      <div class="modal-body">
-        <!--############################### FORMULARIO CLIENTE ###################################### -->
-        <ag-tabla-datos ag-col="infoTablaTemporadas" ng-model="temporadas" ag-constructor="Temporada" ag-on-save="guardarTemporada"></ag-tabla-datos>
-        <!--############################### FIN FORMULARIO ###################################### -->
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-      </div>
-    </div>
   </div>
 </div>
