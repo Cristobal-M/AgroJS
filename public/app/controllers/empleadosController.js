@@ -11,8 +11,6 @@ app.controller('listaEmpleadosController', ['$scope', '$http', 'Empleado',
       {name:'Telefono', var:'telefono'},
       {name:'Direccion', var:'direccion'}
     ];
-    $scope.prueba="----";
-
 
     $scope.botonesTablaEmpleados=[
       {fn:function(e){ window.location="#/empleado/"+e._id; }, content:'<span class="glyphicon glyphicon-info-sign"></span>'}
