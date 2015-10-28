@@ -6,6 +6,14 @@ var ObjectId = Schema.ObjectId;
 var facturaSchema = new Schema({
   cliente: {
     nombre: {type : String, required: true},
+    //La variable la he llamado dni pero puede ser nif
+    dni : {type : String, uppercase: true, trim: true, required: true},
+    telefono : {type : String, trim: true},
+    direccion : String
+  },
+  //Nuestra empresa, quizas se cambie de direccion o algo asi, por lo que prefiero ser precavido
+  empresa: {
+    nombre: {type : String, required: true},
     dni : {type : String, uppercase: true, trim: true, required: true},
     telefono : {type : String, trim: true},
     direccion : String
@@ -13,14 +21,41 @@ var facturaSchema = new Schema({
   year: {type : String},
   num: {type : Number},
   fecha: {type : Date, required: true},
-  fecha_creacion: {type : Date, default: Date.now}
+  fechaCreacion: {type : Date, default: Date.now},
+  total: {type : Number},
   conceptos: [{
     codigo: String,
     descripcion: {type: String, required: true},
     num: {type: Number, required: true},
     precio: {type: Number, required: true}
   }]
+}, {
+  toObject: {
+  virtuals: true
+  },
+  toJSON: {
+  virtuals: true
+  }
 });
+
+
+facturaSchema.virtual('numero')
+.get(function () {
+  var num=this.num.toString();
+  return this.year+("0000".slice(num.length))+num;
+});
+
+facturaSchema.virtual('nombreCliente')
+.get(function () {
+  return this.cliente.nombre;
+});
+
+facturaSchema.virtual('dniCliente')
+.get(function () {
+  return this.cliente.dni;
+});
+
+
 //Comprobar que es valido, creo que es mejor para obtener mensajes de error
 facturaSchema.methods.invalido= function(){
   if(this.year===undefined || this.year.length!==4){
