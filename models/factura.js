@@ -10,11 +10,38 @@ var facturaSchema = new Schema({
     telefono : {type : String, trim: true},
     direccion : String
   },
-  empleado: {type : ObjectId, ref: 'Empleado', required: true},
-  puesto: {nombre: String, coste_hora: Number},
+  year: {type : String},
+  num: {type : Number},
   fecha: {type : Date, required: true},
-  horas : {type : Number, required: true},
-  temporada: {type : ObjectId, ref: 'Temporada'}
+  fecha_creacion: {type : Date, default: Date.now}
+  conceptos: [{
+    codigo: String,
+    descripcion: {type: String, required: true},
+    num: {type: Number, required: true},
+    precio: {type: Number, required: true}
+  }]
 });
-jornalSchema.index({ fecha: 1, finca: 1, empleado: 1}, { unique: true });
-var Jornal = module.exports = mongoose.model('Jornal', jornalSchema);
+//Comprobar que es valido, creo que es mejor para obtener mensajes de error
+facturaSchema.methods.invalido= function(){
+  if(this.year===undefined || this.year.length!==4){
+    return {ok: false, msg: "El año no es valido"};
+  }
+  if(this.num===undefined || this.num<=0){
+    return {ok: false, msg: "El numero de factura no es valido"};
+  }
+  if(this.cliente===undefined || !DNI.validar(this.cliente.dni)){
+    return {ok: false, msg: "El DNI/NIF no es valido"};
+  }
+  if(this.conceptos===undefined || this.conceptos.length==0){
+    return {ok: false, msg: "La factura no puede estar vacia"};
+  }
+  for (var i = 0; i < this.conceptos.length; i++) {
+    var con=this.conceptos[i];
+    if(con.precio<=0)
+      return {ok: false, msg: "El precio no es valido"};
+  }
+  //nada incorrecto
+  return false;
+}
+facturaSchema.index({ year: 1, num: 1}, { unique: true });
+var Factura = module.exports = mongoose.model('Factura', facturaSchema);
