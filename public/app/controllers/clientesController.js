@@ -34,7 +34,7 @@ app.controller('listaClientesController', ['$scope', '$http','Cliente','Finca',
         //Funcion para caso de exito
         function(e){
           if(cb){
-            $scope.empleados.push(f);
+            $scope.clienteSeleccionado.fincas.push(f);
             cb();
           }
         },
