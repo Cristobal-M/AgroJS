@@ -61,23 +61,25 @@
           <thead> \
             <tr> \
               <th ng-repeat="col in datosCol">{{col.name}}</th> \
-              <th style="width:120px"></th> \
+              <th class="col-md-1"></th> \
             </tr> \
           </thead> \
             <tbody> \
                 <tr ng-show="nuevos"> \
                   <td ng-repeat="col in datosCol"><input class="form-control" ng-disabled="editando"  ng-model="nuevo[col.var]"  \\></td> \
                 <td><button ng-disabled="editando" class="btn" ng-click="guardarNuevo()"><span class="glyphicon glyphicon-floppy-saved"></span></button></td></tr> \
-                <tr ng-repeat="dat in datos"> \
+                <tr ng-repeat="dat in datos" style=" height:51px"> \
                     <td ng-hide="dat.editando" ng-repeat="col in datosCol">{{dat[col.var]}}</td> \
                     <td ng-show="dat.editando" ng-repeat="col in datosCol"><input class="form-control" ng-model="dat[col.var]"  \\></td> \
-                    <td ng-hide="editando && dat.editando" style="visibility:{{(editando)?\'hidden\':\'\' }}"> \
-                      <button ng-hide="dat.editando || !buttons" ng-repeat="b in buttons" class="btn" ng-click="b.fn(dat)" title="b.title" ng-bind-html="html(b.content)"></button> \
-                      <button ng-show="editable" class="btn" ng-click="editar(dat)"><span class="glyphicon glyphicon-pencil"></span></button> \
-                    </td> \
-                    <td ng-show="dat.editando"> \
-                      <button class="btn" ng-click="guardar(dat)"><span class="glyphicon glyphicon-floppy-saved"></span></button> \
-                      <button class="btn" ng-click="cancelar(dat)"><span class="glyphicon glyphicon-remove"></span></button> \
+                    <td> \
+                      <div ng-hide="editando && !dat.editando" style="display:inline"> \
+                        <button ng-hide="dat.editando" ng-repeat="b in buttons" class="btn" ng-click="b.fn(dat)" title="b.title" ng-bind-html="html(b.content)"></button> \
+                        <button ng-show="editable" class="btn" ng-click="editar(dat)"><span class="glyphicon glyphicon-pencil"></span></button> \
+                      </div>\
+                      <div ng-show="dat.editando" style="display:inline"> \
+                        <button class="btn" ng-click="guardar(dat)"><span class="glyphicon glyphicon-floppy-saved"></span></button> \
+                        <button class="btn" ng-click="cancelar(dat)"><span class="glyphicon glyphicon-remove"></span></button> \
+                      </div> \
                     </td> \
                 </tr> \
             </tbody> \
