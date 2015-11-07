@@ -121,4 +121,18 @@ router.post('/temporadas', function(req, res, next) {
   }
 });
 
+router.delete('/', function(req, res, next) {
+  var id=req.query._id;
+  debug('borrado de un jornal'+JSON.stringify(req.body));
+  if(id===undefined){
+    res.status=400;
+    res.json({ok:false, msg: 'no hay id'});
+    return;
+  }
+
+  Jornal.findByIdAndRemove(id, function(err, e) {
+    if (err) next(err);
+    res.json({ok:true, msg: 'borrado'});
+  });
+});
 module.exports = router;

@@ -75,6 +75,11 @@ app.controller('jornalesController', ['$scope', '$http', 'Jornal', 'Temporada', 
         aux[f]='_';
         $scope.ordenes.push(aux);
         jornales[f]={};
+        //obtenemos los jornales de un dia concreto, y se reorganizan en una lista 
+        /*
+        [xx-xx-xxxx:[idEmpleado1:{...}, idEmpleado2:{...}, ....],
+         xx-xx-xxxx: ....]
+        */
         var jornalesDia= Jornal.query(
           {'fecha': f, 'finca': finca._id, 'temporada': temporada._id},
           function(jd){

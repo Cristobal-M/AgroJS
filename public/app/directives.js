@@ -27,7 +27,7 @@
         scope.editando=false;
       });
       */
-      //Si esta dentro de un modal se resetea la edicion si se cierra, es mas eficiente que lo anterior
+      //Si esta dentro de un modal se resetea la edicion cuando se cierra, creo que es mas eficiente que lo anterior
       $(element).closest('div.modal').on("hidden.bs.modal", function(e) {scope.editando=false;});
       scope.editar=function(e){
         scope.backup=angular.copy(e);
@@ -110,30 +110,14 @@ angular.module("app").directive('agJornal',['Jornal', function(Jornal) {
      //scope.puestos=angular.copy(scope.temporada.puestos);
      scope.puestos=scope.temporada.puestos;
      scope.editando=false;
-     //var nuevoJornal=true;
+     //Si no existe previamente se creara uno nuevo
      var nuevoJornal=scope.jornal===undefined;
-/*
-     if(scope.jornal!==undefined){
-       nuevoJornal=false;
-       var pj=scope.jornal.puesto;
-       var existePuesto=false;
-       for (var i = 0; i < scope.puestos.length; i++) {
-         var p=scope.puestos[i];
-         if( (p.nombre+p.coste_hora)===(pj.nombre+pj.coste_hora) ){
-           existePuesto=true;
-           break;
-         }
-       }
-       if(!existePuesto)
-        scope.puestos.push(pj);
-     }
-
-*/
+     //
      scope.$watch(
-       function(){return scope.jornales[scope.dia][scope.idTrabajador]; },
+       function(){return scope.jornales[scope.dia][scope.idTrabajador]!==undefined; },
         function(newValue, oldValue) {
           //console.log(8888888);
-          if ( newValue !== oldValue && jornales[scope.idTrabajador]!==undefined && nuevoJornal) {
+          if ( newValue !== oldValue && newValue && nuevoJornal) {
             nuevoJornal=false;
             scope.jornal=jornales[scope.idTrabajador];
           }
@@ -141,6 +125,7 @@ angular.module("app").directive('agJornal',['Jornal', function(Jornal) {
       );
 
      scope.iniciarEdicion=function(){
+       //Si el jornal no se ha creado previamente
        if(nuevoJornal){
          scope.jornal=new Jornal();
          scope.jornal.empleado=scope.idTrabajador;
@@ -159,10 +144,33 @@ angular.module("app").directive('agJornal',['Jornal', function(Jornal) {
 
        scope.editando=false;
      }
+
+     scope.borrarJornal= function(){
+       scope.jornal.$delete({_id:scope.jornal._id},
+         function(e){
+           console.log(JSON.stringify(e));
+           if(!nuevoJornal && e.ok)
+            delete scope.jornales[scope.trabajador];
+           scope.editando=false;
+           scope.color=colors[2];
+         },
+         function(e){
+           scope.color=colors[1];
+           alert(e.msg);
+         }
+       );
+     }
+
      scope.guardarJornal=function(){
 
        if(scope.jornal.horas===undefined || scope.jornal.horas===0){
-         scope.editando=false;
+         if(nuevoJornal){
+           scope.editando=false;
+         }
+         //Si no es nuevo se considera que con horas==0 se borra
+         else{
+           scope.borrarJornal();
+         }
          return;
        }
        console.log("guardando jornal"+JSON.stringify(scope.jornal));
