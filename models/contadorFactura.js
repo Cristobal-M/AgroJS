@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var debug = require('debug')('agrojs:contadorFactura');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
@@ -8,11 +9,11 @@ var contadorFacturaSchema = new Schema({
 });
 //Comprobar que es valido, creo que es mejor para obtener mensajes de error
 contadorFacturaSchema.statics.generarNumero= function(year, next){
-  this.findOneAndUpdate( {year: year}, { $inc: { num: 1 } }, function (err, data) {
+  //new es false por defecto y devuelve el elemento antes del cambio en caso de insertar uno nuevo seria null
+  this.findOneAndUpdate( {year: year}, { $inc: { num: 1 } }, {upsert: true, new: true}, function (err, data) {
     if (err) next(err);
-    var num = data.number;
-    next(false, num);
+    next(false, data);
   });
 }
 
-var contadorFactura = module.exports = mongoose.model('contadorFactura', facturaSchema);
+var contadorFactura = module.exports = mongoose.model('contadorFactura', contadorFacturaSchema);

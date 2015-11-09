@@ -75,7 +75,7 @@ app.controller('jornalesController', ['$scope', '$http', 'Jornal', 'Temporada', 
         aux[f]='_';
         $scope.ordenes.push(aux);
         jornales[f]={};
-        //obtenemos los jornales de un dia concreto, y se reorganizan en una lista 
+        //obtenemos los jornales de un dia concreto, y se reorganizan en una lista
         /*
         [xx-xx-xxxx:[idEmpleado1:{...}, idEmpleado2:{...}, ....],
          xx-xx-xxxx: ....]
@@ -86,8 +86,11 @@ app.controller('jornalesController', ['$scope', '$http', 'Jornal', 'Temporada', 
             console.log(JSON.stringify(jd));
             for (var j=0;j<jd.length;j++) {
               var jornal_aux=jd[j];
-              if(jornal_aux.empleado!==undefined)
-              jornales[moment.utc(jornal_aux.fecha).format('YYYY-MM-DD')][jornal_aux.empleado]=angular.copy(jornal_aux);
+              if(jornal_aux.empleado!==undefined){
+                var i_fecha = moment.utc(jornal_aux.fecha).format('YYYY-MM-DD');
+                jornales[i_fecha][jornal_aux.empleado]=angular.copy(jornal_aux);
+              }
+
             }
           }
         );

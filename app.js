@@ -57,6 +57,8 @@ var seguridad = require('./lib/seguridad');
 app.use('/clientes',seguridad.permitirRoles(false,'admin','usuario') , require('./routes/clientes'));
 app.use('/empleados',seguridad.permitirRoles(false,'admin','usuario') , require('./routes/empleados'));
 app.use('/jornales',seguridad.permitirRoles(false,'admin','usuario') , require('./routes/jornales'));
+app.use('/facturas',seguridad.permitirRoles(false,'admin','usuario') , require('./routes/facturas'));
+app.use('/empresa',seguridad.permitirRoles(false,'admin','usuario') , require('./routes/empresa'));
 //Para lo relacionado con el login
 app.use('/login', require('./routes/login'));
 //Index de la web, la propia aplicacion
@@ -70,7 +72,15 @@ app.use(function(req, res, next) {
 });
 
 // error handlers
+app.use(function(err, req, res, next) {
+  if(err.status===400){
+    res.status(400).json({ok: false, msg:err.message});
+  }
+  else{
+    next(err);
+  }
 
+});
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {

@@ -22,6 +22,27 @@ clientesServices.factory('Finca', ['$resource',
   }
 ]);
 
+clientesServices.factory('Factura', ['$resource',
+  function($resource){
+    return $resource('/facturas/:id', {id:'@_id'},
+      { query: {method:'GET', isArray:true},
+        save: {method:'POST'},
+        update: {method:'PUT'},
+        get: {method:'GET'}
+      }
+    );
+  }
+]);
+
+clientesServices.factory('Empresa', ['$resource',
+  function($resource){
+    return $resource('/empresa', {},
+      { get: {method:'GET', isArray:false},
+        save: {method:'POST'}
+      }
+    );
+  }
+]);
 
 //////////////////////////////////////////////////////////////////////////////////
 //EMPLEADOS

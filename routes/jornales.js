@@ -108,8 +108,8 @@ router.post('/temporadas', function(req, res, next) {
   }
   else{
     debug('la temporada no existe se crea uno nuevo');
-    var temp=new Temporada(req.body);
     temp.save(function(err) {
+    var temp=new Temporada(req.body);
       if (err){
         debug(JSON.stringify(err));
         errores.tratarError(err,res,next);

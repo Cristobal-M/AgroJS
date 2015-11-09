@@ -24,6 +24,16 @@ app.config(['$routeProvider', function($routeProvider) {
       controller: 'jornalesController',
       menuActivo: 'jornales'
    }).
+   when('/factura/:id?', {
+      templateUrl: viewsDir+'factura.html',
+      controller: 'facturaController',
+      menuActivo: 'facturas'
+   }).
+   when('/facturas', {
+      templateUrl: viewsDir+'listaFacturas.html',
+      controller: 'listadoFacturasController',
+      menuActivo: 'facturas'
+   }).
    otherwise({
       redirectTo: '/'
    });

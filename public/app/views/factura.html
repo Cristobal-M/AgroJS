@@ -1,0 +1,145 @@
+<div id="imprimir">
+  <h1 style="display:inline;margin-right:50px">Factura</h1>
+
+      <!-- DATOS EMPRESA Y CLIENTE -->
+      <div class="row">
+        <!--#################### DATOS EMPRESA ##################-->
+        <div class="col-md-3 col-xs-4 datosContacto" >
+          <div class="col-md-12"><h4 class="factura">Empresa</h4></div>
+          <table class="table table-stripped">
+            <tr>
+              <td class="col-md-3">Nombre</td>
+              <td ng-model="factura.empresa.nombre" contenteditable>
+              </td>
+            </tr>
+            <tr>
+              <td class="col-md-3">{{tipoDocumento(factura.empresa.dni)}}</td>
+              <td ng-model="factura.empresa.dni" contenteditable></td>
+            </tr>
+            <tr>
+              <td class="col-md-3">Direccion</td>
+              <td ng-model="factura.empresa.direccion" contenteditable></td>
+            </tr>
+            <tr>
+              <td class="col-md-3">Telefono</td>
+              <td ng-model="factura.empresa.telefono" contenteditable></td>
+            </tr>
+          </table>
+        </div>
+        <!--#################### FIN DATOS EMPRESA ##################-->
+        <!--#################### DATOS CLIENTE ##################-->
+        <div class="col-md-3 col-md-offset-6 col-xs-4 col-xs-offset-4 datosContacto">
+          <div class="col-md-12"><h4 class="factura">Cliente</h4></div>
+            <table class="table table-stripped col-md-12">
+              <tr>
+                <td class="col-md-3">Nombre</td>
+                <td ng-model="factura.cliente.nombre" contenteditable></td>
+              </tr>
+              <tr>
+                <td class="col-md-3">{{tipoDocumento(factura.cliente.dni)}}</td>
+                <td ng-model="factura.cliente.dni" contenteditable></td>
+              </tr>
+              <tr>
+                <td class="col-md-3">Direccion</td>
+                <td ng-model="factura.cliente.direccion" contenteditable></td>
+              </tr>
+              <tr>
+                <td class="col-md-3">Telefono</td>
+                <td ng-model="factura.cliente.telefono" contenteditable></td>
+              </tr>
+            </table>
+        </div>
+        <!--#################### FIN DATOS CLIENTE ##################-->
+      </div>
+      <!-- FIN DATOS EMPRESA Y CLIENTE -->
+      <!-- CONCEPTOS -->
+      <div class="row">
+        <table class="table table-striped table-hover factura">
+          <thead>
+            <tr>
+              <td class="no-imprimir"></td>
+              <!--
+              <td class="col-xs-2 col-md-2">Codigo</td>
+              <td class="col-xs-5 col-md-5">Concepto</td>
+              <td class="col-xs-1 col-md-1">Unidades</td>
+              <td class="col-xs-1 col-md-1">Precio (€)</td>
+              <td class="col-xs-3 col-md-3">Total</td>
+            -->
+              <td>Codigo</td>
+              <td class="col-xs-4 col-md-4">Concepto</td>
+              <td>Unidades</td>
+              <td>Precio (€)</td>
+              <td>Total</td>
+            </tr>
+          </thead>
+          <tdody>
+            <tr ng-repeat="con in factura.conceptos">
+              <td  class="no-imprimir">
+                <button ng-click="eliminarConcepto($index)" class="btn btn-danger">
+                  <span class="glyphicon glyphicon-remove-circle"></span>
+                </button>
+              </td>
+              <td>
+                <input ng-model="con.codigo" class="factura no-imprimir"></input>
+                <span class="imprimir">{{con.codigo}}</span>
+              </td>
+              <td>
+                <input ng-model="con.descripcion" class="factura no-imprimir"></input>
+                <span class="imprimir break">{{con.descripcion}}</span>
+              </td>
+              <td>
+                <input value="0" ng-model="con.unidades" class="factura no-imprimir"></input>
+                <span class="imprimir">{{con.unidades}}</span>
+              </td>
+              <td>
+                <input value="0.00" ng-model="con.precio_unidad" class="factura no-imprimir"></input>
+                <span class="imprimir">{{con.precio_unidad|number:2}}€</span>
+              </td>
+              <td>{{ con.precio_unidad * con.unidades| number: 2 }}€</td>
+            </tr>
+            <tr class="no-imprimir">
+              <td>
+                <button ng-click="anadirConcepto()" class="btn btn-success">
+                  <span class="glyphicon glyphicon-plus-sign"></span>
+                </button>
+              </td>
+              <td><input ng-model="nuevoConcepto.codigo" class="factura"></input></td>
+              <td><input ng-model="nuevoConcepto.descripcion" class="factura"></input></td>
+              <td><input type="number" value="0" ng-model="nuevoConcepto.unidades" class="factura"></input></td>
+              <td><input type="number" value="0.00" ng-model="nuevoConcepto.precio_unidad" class="factura"></input></td>
+              <td>{{ (nuevoConcepto.precio_unidad * nuevoConcepto.unidades)| number: 2 }}€</td>
+            </tr>
+          </tbody>
+        </table>
+  </div>
+  <div class="row">
+    <div class="col-md-5 col-xs-5">
+      <div class="col-md-12 col-xs-12"><p>Observaciones</p></div>
+      <textarea class="col-md-12 col-xs-12 form-control" ng-model="factura.observaciones"></textarea>
+    </div>
+    <div class="col-md-4 col-md-offset-3 col-xs-4 col-xs-offset-3">
+      <table class="table table-stripped">
+        <tr>
+          <td><b>Subtotal</b></td>
+          <td>{{getSubtotal()| number: 2}}€</td>
+        </tr>
+        <tr>
+          <td><b>IVA</b> <b class="imprimir">({{factura.iva}}%)</b></td>
+          <td>
+            <input class="no-imprimir factura" value="0" ng-model="factura.iva" class="factura" size="2" type="number" style="width:auto"></input>
+            <span class="imprimir">{{factura.importeIva|number:2}}€</span>
+          </td>
+        </tr>
+        <tr>
+          <td><b>Total</b></td><td><b>{{ factura.total| number: 2 }}€</b></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <button class="col-md-1 col-md-offset-11 col-xs-2 col-xs-offset-10 btn btn-success" ng-click="guardar()">
+      <span class="glyphicon glyphicon-save-icon"></span>Guardar
+    </button>
+  </div>
+  <!-- FIN FACTURA -->
+</div>

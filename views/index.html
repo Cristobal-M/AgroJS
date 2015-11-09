@@ -19,6 +19,7 @@
     <script src="js/bootstrap.js"></script>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/admin.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
     <script src="/js/angular.js"></script>
     <script src="/js/angular-route.js"></script>
     <script src="/js/angular-resource.js"></script>
@@ -27,6 +28,8 @@
     <script src="/app/services.js"></script>
     <script src="/app/app.js"></script>
     <script src="/app/directives.js"></script>
+    <script src="/app/controllers/facturaController.js"></script>
+    <script src="/app/controllers/listadoFacturasController.js"></script>
     <script src="/app/controllers/clientesController.js"></script>
     <script src="/app/controllers/empleadosController.js"></script>
     <script src="/app/controllers/jornalesController.js"></script>
@@ -67,6 +70,16 @@
               <ul class="dropdown-menu">
                 <li><a href="#/empleados_activos" style="padding-top:7px;padding-bottom:7px">Empleados activos</a></li>
                 <li><a href="#/jornales" style="padding-top:7px;padding-bottom:7px">Jornadas por finca</a></li>
+                <li role="separator" class="divider"></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a ng-class="{active: $route.current.menuActivo == 'facturas'}" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                Facturas <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                <li><a href="#/factura" style="padding-top:7px;padding-bottom:7px">Nueva factura</a></li>
+                <li><a href="#/facturas" style="padding-top:7px;padding-bottom:7px">Listado facturas</a></li>
                 <li role="separator" class="divider"></li>
               </ul>
             </li>

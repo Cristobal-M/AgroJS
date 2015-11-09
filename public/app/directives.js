@@ -18,7 +18,7 @@
       scope.editando=false;
       scope.editable=(scope.editable===undefined)? false : scope.editable;
       if(scope.constructor!==undefined){
-        scope.nuevos=true;
+        scope.nuevosElementos=true;
         scope.nuevo=new scope.constructor();
       }
       //Cuando cambien los datos se resetea
@@ -65,7 +65,7 @@
             </tr> \
           </thead> \
             <tbody> \
-                <tr ng-show="nuevos"> \
+                <tr ng-show="nuevosElementos"> \
                   <td ng-repeat="col in datosCol"><input class="form-control" ng-disabled="editando"  ng-model="nuevo[col.var]"  \\></td> \
                 <td><button ng-disabled="editando" class="btn" ng-click="guardarNuevo()"><span class="glyphicon glyphicon-floppy-saved"></span></button></td></tr> \
                 <tr ng-repeat="dat in datos" style=" height:51px"> \

@@ -1,0 +1,21 @@
+<div class="container-fluid">
+  <h1 style="display:inline;margin-right:50px">Facturas</h1>
+  <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <td>Numero</td>
+        <td>Fecha</td>
+        <td>Cliente</td>
+        <td>Total</td>
+      </tr>
+    </thead>
+    <tdody>
+      <tr ng-repeat="fac in facturas">
+        <td>{{ fac.numero }}</td>
+        <td>{{ fac.fecha| date: "dd/MM/yyyy" }}</td>
+        <td>{{ fac.nombreCliente }}</td>
+        <td>{{ fac.total| number: 2 }} €</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

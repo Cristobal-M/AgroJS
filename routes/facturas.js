@@ -15,7 +15,7 @@ router.get('/', function(req, res, next) {
 
   if(year!==undefined) busqueda.year=year;
 
-  Factura.find(busqueda,"nombreCliente dniCliente fecha numero total" ,function(err, e) {
+  Factura.find(busqueda,"nombreCliente dniCliente fecha numero total num year" ,function(err, e) {
     if (err) next(err);
     debug('enviando facturas solicitadas '+JSON.stringify(e));
     res.json(e);
@@ -26,8 +26,14 @@ router.get('/', function(req, res, next) {
 router.get('/:id', function(req, res, next) {
   debug('factura solicitada '+JSON.stringify(req.params));
 
-  Factura.find({_id: req.params.id},"nombreCliente dniCliente fecha numero total" ,function(err, e) {
-    if (err) next(err);
+  Factura.findOne({_id: req.params.id},function(err, e) {
+    debug(JSON.stringify(err));
+    if (err) return next(err);
+    if(e===undefined || e===null){
+      res.status=404;
+      res.json({ok:false, msg:"La factura no existe"});
+      return;
+    }
     debug('enviando factura solicitada '+JSON.stringify(e));
     res.json(e);
   });
@@ -48,47 +54,60 @@ router.post('/', function(req, res, next) {
   }
   var id=req.body._id;
   if(id!==undefined){
-    debug('la factura ya existe se editara');
-    Factura.findOne({_id: id},function(err, factura) {
-      if (err) next(err);
-      factura.set(req.body);
-      var error=factura.invalido();
-      if(error){
-        res.json(error);
-        return;
-      }
-      factura.save(function(err, fac) {
-        if (err){
-          debug(JSON.stringify(err));
-          errores.tratarError(err,res,next);
-          return;
-        }
-        debug('factura editada');
-        res.json(fac);
-
-      });
-    });
+    var e=new Error("Esta factura ya tiene id, parece que quiere editarla");
+    e.status=400;
+    return next(e);
   }
   else{
-    debug('la factura no existe se crea uno nuevo');
+    debug('la factura no existe se crea una nueva');
     var factura=new Factura(req.body);
     var error=factura.invalido();
     if(error){
-      res.json(error);
+      debug('Error'+JSON.stringify(error));
+      next(error);
       return;
     }
-    factura.save(function(err) {
+    factura.save(function(err,fac) {
       if (err){
         debug(JSON.stringify(err));
         errores.tratarError(err,res,next);
         return;
       }
-      debug('jornal guardado');
-      res.json(jornal);
+      debug('factura guardada');
+      res.json(fac);
 
     });
   }
 });
-
+router.put('/:id', function(req, res, next){
+  var id=req.params.id;
+  var factura=req.body;
+  delete factura._id;
+  debug('se editara la factura '+id);
+  Factura.findOne({_id: id},function(err, factura) {
+    if (err) next(err);
+    if(factura===undefined){
+      res.status=400;
+      res.json({ok:false, msg:"No existe la factura"});
+      return;
+    }
+    factura.set(req.body);
+    var error=factura.invalido();
+    if(error){
+      res.status=400;
+      res.json(error);
+      return;
+    }
+    factura.save(function(err, fac) {
+      if (err){
+        debug(JSON.stringify(err));
+        errores.tratarError(err,res,next);
+        return;
+      }
+      debug('factura editada');
+      res.json(fac);
+    });
+  });
+});
 
 module.exports = router;

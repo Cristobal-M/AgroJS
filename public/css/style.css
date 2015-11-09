@@ -1,8 +1,106 @@
 body {
-  padding: 50px;
+  padding: 5px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
+}
+
+
+/* Factura */
+input.factura{
+  border: 1px solid #F9F9F9;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: white;
+}
+textarea.factura{
+  border: 1px solid #F9F9F9;
+  width: 100%;
+  height: 100%;
+  resize: none;
+}
+
+input.factura:hover, input.factura:focus{
+  border: 1px solid #CCC;
+  background-color: #FFFF99;
+}
+table.factura > thead > tr > td{
+  font-weight: bold;
+}
+.break{
+  word-break: break-all;
+}
+
+div.datosContacto td[contenteditable]:hover, div.datosContacto td[contenteditable]:focus{
+  background-color: #E5F0FF;
+}
+
+table.factura td>span[contenteditable]:hover, table.factura td>span[contenteditable]:focus{
+  background-color: #E5F0FF;
+}
+
+
+h4.factura{
+  text-align: center;
+}
+
+div.datosContacto table{
+  table-layout: fixed!important;
+  word-wrap: break-word;
+}
+div.datosContacto td{
+  padding: 0!important;
+}
+.break{
+  max-width: 100%;
+  word-break: break-all;
+}
+
+
+@page {
+    size: A4;
+    padding: 2mm;
+    margin-left: 4mm;
+    margin-right: 4mm;
+}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  input.factura{
+    border: 0px;
+  }
+
+  #imprimir, #imprimir * {
+    visibility: visible;
+  }
+  #imprimir .no-imprimir {
+    display: none;
+  }
+  .imprimir {
+    display: inline-block!important;
+  }
+  #imprimir {
+    position: absolute;
+    width:100%;
+    padding: 0mm 3mm 0mm 3mm;
+    left: 0;
+    top: 0;
+  }
+}
+.imprimir {
+  display: none;
+}
+
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance:textfield;
 }
