@@ -38,8 +38,7 @@ clienteSchema.path('dni').validate(function (value, respond) {
   var id=this._id;
 
   Cliente.findOne({ dni: value }, function (err, cl) {
-    if(err) throw err;
-    console.log("------>"+id+"<<\n>>"+cl._id+"<<\n");
+    if(err) respond(false);
     if(cl && !cl._id.equals(id)) {
       return respond(false);
     }

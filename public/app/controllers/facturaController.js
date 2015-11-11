@@ -88,7 +88,9 @@ app.controller('facturaController', ['$scope', '$http', '$routeParams', 'Factura
     $scope.guardar=function(){
       if($scope.factura.conceptos.length==0) return;
       if(facturaNueva){
-        $scope.factura.$save();
+        $scope.factura.$save(function(f){
+          facturaNueva=false;
+        });
       }
       else{
         $scope.factura.$update();

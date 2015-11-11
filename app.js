@@ -7,7 +7,6 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var session = require('express-session');
 var nunjucks  = require('nunjucks');
-//var RedisStore = require('connect-redis')(session);
 var mongoStore = require('connect-mongo')(session);
 var app = express();
 
@@ -72,13 +71,28 @@ app.use(function(req, res, next) {
 });
 
 // error handlers
+//client errors
+//funcion que genera un mensaje para el usuario a partir de un error
+var getMensajeError=require("./lib/errores").getMensaje;
+//Si se ha generado un error debido a un fallo en la peticion
 app.use(function(err, req, res, next) {
-  if(err.status===400){
-    res.status(400).json({ok: false, msg:err.message});
+  try{
+    if(err.status===400){
+      res.status(400).json({'ok': false, 'msg':err.message});
+    }
+    else{
+      var msg=getMensajeError(err);
+      if(msg){
+        res.status(400).json({'ok': false, 'msg':msg});
+        return;
+      }
+      next(err);
+    }
+  }catch(error){
+    error.status=500;
+    next(error);
   }
-  else{
-    next(err);
-  }
+
 
 });
 // development error handler
