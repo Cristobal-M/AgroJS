@@ -41,7 +41,7 @@ router.post('/', function(req, res, next) {
   var id=req.body._id;
   if(id!=undefined){
     debug('el empleado ya existe se editara');
-    Empleado.findOne({_id: id},function(err, empleado) {
+    Empleado.getById(id, function(err, empleado) {
       if (err) throw err;
       empleado.set(req.body);
       empleado.save(function(err, empleados) {
@@ -74,15 +74,31 @@ router.post('/', function(req, res, next) {
 
 });
 
-router.get('/:idEmpleado', function(req, res, next) {
+router.get('/:id', function(req, res, next) {
   debug('empleado solicitado');
 
-  Empleado.findOne({_id: req.params.idEmpleado}, function(err, empleado) {
+  Empleado.getById(req.params.id, function(err, empleado) {
     if (err) return next(err);
     res.json(empleado);
   });
 
 });
+
+router.put('/:id', function(req, res, next) {
+  debug('Edicion de empleado');
+
+  Empleado.getById(req.params.id, function(err, empleado) {
+    if (err) return next(err);
+    delete req.body._id;
+    empleado.set(req.body);
+    empleado.save(function(err, emp){
+      if(err) return next(err);
+      res.json(emp);
+    });
+  });
+
+});
+
 
 router.get('/:idEmpleado/jornales', function(req, res, next) {
   debug('listado de jornales del empleado '+req.params.idEmpleado);

@@ -48,14 +48,10 @@ router.post('/', function(req, res, next) {
   if(id!==undefined){
     debug('el jornal ya existe se editara');
     Jornal.findOne({_id: id},function(err, jornal) {
-      if (err) throw err;
+      if (err) return next(err);
       jornal.set(req.body);
       jornal.save(function(err, jornal) {
-        if (err){
-          debug(JSON.stringify(err));
-          errores.tratarError(err,res,next);
-          return;
-        }
+        if (err) return next(err)
         debug('jornal editado');
         res.json(jornal);
 
@@ -66,11 +62,7 @@ router.post('/', function(req, res, next) {
     debug('el jornal no existe se crea uno nuevo');
     var jornal=new Jornal(req.body);
     jornal.save(function(err) {
-      if (err){
-        debug(JSON.stringify(err));
-        errores.tratarError(err,res,next);
-        return;
-      }
+      if (err) return next(err)
       debug('jornal guardado');
       res.json(jornal);
 
@@ -81,7 +73,7 @@ router.post('/', function(req, res, next) {
 router.get('/temporadas', function(req, res, next) {
   debug('listado de temporadas');
   Temporada.find({}, function(err, e) {
-    if (err) throw err;
+    if (err) return next(err);
     res.json(e);
   });
 });
@@ -95,11 +87,7 @@ router.post('/temporadas', function(req, res, next) {
       if (err) return next(err);
       temp.set(req.body);
       temp.save(function(err, jornal) {
-        if (err){
-          debug(JSON.stringify(err));
-          errores.tratarError(err,res,next);
-          return;
-        }
+        if (err) return next(err);
         debug('temporada editado');
         res.json(temp);
 
@@ -110,11 +98,7 @@ router.post('/temporadas', function(req, res, next) {
     debug('la temporada no existe se crea uno nuevo');
     temp.save(function(err) {
     var temp=new Temporada(req.body);
-      if (err){
-        debug(JSON.stringify(err));
-        errores.tratarError(err,res,next);
-        return;
-      }
+      if (err) return next(err);
       debug('temporada guardado');
       res.json(temp);
     });
@@ -131,7 +115,7 @@ router.delete('/', function(req, res, next) {
   }
 
   Jornal.findByIdAndRemove(id, function(err, e) {
-    if (err) next(err);
+    if (err) return next(err);
     res.json({ok:true, msg: 'borrado'});
   });
 });

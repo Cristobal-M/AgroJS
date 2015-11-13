@@ -27,13 +27,32 @@ router.get('/', function(req, res, next) {
 
 });
 
+router.get('/:id', function(req, res, next) {
+  Cliente.getById(req.params.id, function(err, cliente) {
+    if (err) return next(err);
+    res.json(cliente);
+  });
+});
+
+router.put('/:id', function(req, res, next) {
+  Cliente.getById(req.params.id, function(err, cliente) {
+    if (err) return next(err);
+    delete req.body._id;
+    cliente.set(req.body);
+    cliente.save(function(err, cl){
+      if(err) return next(err);
+      res.json(cl);
+    });
+  });
+});
+
 router.post('/', function(req, res, next) {
   debug('guardado de un cliente solicitado:' +JSON.stringify(req.body));
   var id=req.body._id;
   if(id!=undefined){
     debug('el cliente ya existe se editara');
     Cliente.findOne({_id: id},function(err, cliente) {
-      if (err) throw err;
+      if (err) return next(err);
       cliente.set(req.body);
       cliente.save(function(err, clientes) {
         if (err){
@@ -65,21 +84,19 @@ router.post('/', function(req, res, next) {
 
 });
 
-
-
 router.get('/:id/fincas', function(req, res, next) {
   if(req.params.id===undefined)
     return res.json([]);
-  Cliente.findOne({'_id':req.params.id}, function(err, cliente) {
-    if (err) throw err;
+  Cliente.getById(req.params.id, function(err, cliente) {
+    if (err) return next(err);
     res.json(cliente.fincas);
   });
 });
 
 router.post('/:id/fincas', function(req, res, next) {
   debug('Peticion para añadir o editar una finca del cliente id='+req.params.id);
-  Cliente.findOne({'_id':req.params.id}, function(err, cliente) {
-    if (err) throw err;
+  Cliente.getById(req.params.id, function(err, cliente) {
+    if (err) return next(err);
     var finca=req.body;
     if(finca._id && finca._id!=""){
       debug('La finca se editara, ya que tiene id='+finca._id);
@@ -96,12 +113,10 @@ router.post('/:id/fincas', function(req, res, next) {
       cliente.fincas.push(finca);
 
     }
-
-
     cliente.save(function(err) {
       if (err){
         debug(JSON.stringify(err));
-        return errores.tratarError(err,res,next);
+        return next(err);
       }
       debug('finca guardada correctamente id='+finca._id);
       res.json(finca);
@@ -110,39 +125,7 @@ router.post('/:id/fincas', function(req, res, next) {
   });
 });
 
-router.get('/:id', function(req, res, next) {
-  Cliente.findOne({'_id':req.params.id}, function(err, cliente) {
-    if (err) return next(err);
-    res.json(cliente);
-  });
 
-});
 
-router.get('/crear', function(req, res, next) {
-  //res.render('index', { title: 'Express' });
-  var nuevo=new Cliente({nombre: 'cristobal', dni : '     00100000Z'});
-
-  nuevo.save(function(err, clientes) {
-    if (err){
-      mensaje=errores.getMensaje(err);
-      if(mensaje){
-        res.json({ok: false, msg: mensaje});
-        return;
-      }
-      else
-        return next(err);
-    }
-    res.json({ok:true, msg:"Cliente creado"});
-  });
-
-});
-
-router.get('/prueba', function(req, res, next) {
-  if(req.session.n==undefined)
-    req.session.n=0;
-  req.session.n++;
-  comun++;
-  res.json([req.session.n, req.session.user, comun]);
-});
 
 module.exports = router;

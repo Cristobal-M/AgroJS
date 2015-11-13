@@ -17,17 +17,30 @@ var clienteSchema = new Schema({
       observaciones: String
     }]
 });
-/*
-clienteSchema.methods.set= function(cl){
-  cliente.telefono=req.body.telefono;
-  cliente.dni=req.body.dni;
-  cliente.direccion=req.body.direccion;
-  cliente.email=req.body.email;
-  cliente.nombre=req.body.nombre;
-  cliente.apellidos=req.body.apellidos;
-  cliente.observaciones=req.body.observaciones;
-}
-*/
+
+//Funcion para obtener un cliente por su id, devuelve un error para el usuario por si no existe
+clienteSchema.statics.getById= function(id, cb){
+  this.findOne({'_id': id}, function(err, cliente) {
+    if (err){
+      //Si devuelve un CastError seguramente sea porque la id no es valida
+      if(err.name && err.name==='CastError'){
+        var error=new Error("La id no es valida");
+        error.status=400;
+        return cb(error);
+      }
+      else
+        return cb(err)
+    };
+    //Si el cliente es undefined o null
+    if(!cliente){
+      var error=new Error("El cliente no existe");
+      error.status=404;
+      return cb(error);
+    }
+    cb(false, cliente);
+  });
+};
+
 var Cliente =module.exports = mongoose.model('Cliente', clienteSchema);
 
 //Para esta validacion el modelo cliente debe estar definido

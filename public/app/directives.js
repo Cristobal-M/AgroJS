@@ -30,9 +30,12 @@
       //Si esta dentro de un modal se resetea la edicion cuando se cierra, creo que es mas eficiente que lo anterior
       $(element).closest('div.modal').on("hidden.bs.modal", function(e) {scope.editando=false;});
       scope.editar=function(e){
-        scope.backup=angular.copy(e);
-        e.editando=true;
-        scope.editando=true;
+        if(!scope.editando){
+          scope.backup=angular.copy(e);
+          e.editando=true;
+          scope.editando=true;
+        }
+
       }
       scope.cancelar=function(e){
         delete e.editando;

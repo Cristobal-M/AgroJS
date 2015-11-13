@@ -77,13 +77,13 @@ var getMensajeError=require("./lib/errores").getMensaje;
 //Si se ha generado un error debido a un fallo en la peticion
 app.use(function(err, req, res, next) {
   try{
-    if(err.status===400){
-      res.status(400).json({'ok': false, 'msg':err.message});
+    if(err.status>=400 || err.status<500){
+      res.status(err.status).json({'ok': false, 'msg':err.message});
     }
     else{
       var msg=getMensajeError(err);
       if(msg){
-        res.status(400).json({'ok': false, 'msg':msg});
+        res.status(err.status).json({'ok': false, 'msg':msg});
         return;
       }
       next(err);
@@ -92,8 +92,6 @@ app.use(function(err, req, res, next) {
     error.status=500;
     next(error);
   }
-
-
 });
 // development error handler
 // will print stacktrace

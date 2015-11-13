@@ -12,6 +12,29 @@ var empleadoSchema = new Schema({
   telefono : {type : String, trim: true}
 });
 
+//Funcion para obtener un cliente por su id, devuelve un error para el usuario por si no existe
+empleadoSchema.statics.getById= function(id, cb){
+  this.findOne({'_id': id}, function(err, emp) {
+    if (err){
+      //Si devuelve un CastError seguramente sea porque la id no es valida
+      if(err.name && err.name==='CastError'){
+        var error=new Error("La id no es valida");
+        error.status=400;
+        return cb(error);
+      }
+      else
+        return cb(err)
+    };
+    //Si el cliente es undefined o null
+    if(!emp){
+      var error=new Error("El empleado no existe");
+      error.status=404;
+      return cb(error);
+    }
+    cb(false, emp);
+  });
+};
+
 var Empleado = module.exports = mongoose.model('Empleado', empleadoSchema);
 
 //Comprobamos que no hay empleados con el mismo dni
