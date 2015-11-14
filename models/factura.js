@@ -42,6 +42,7 @@ var facturaSchema = new Schema({
   }
 });
 
+facturaSchema.index({ year: 1, num: 1}, { unique: true });
 
 //Comprobar que es valido, creo que es mejor para obtener mensajes de error
 facturaSchema.methods.invalido= function(){
@@ -129,7 +130,6 @@ facturaSchema.pre('save', function (next) {
   });
 });
 
-facturaSchema.index({ year: 1, num: 1}, { unique: true });
 
 
 facturaSchema.virtual('numero')

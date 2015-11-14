@@ -181,10 +181,10 @@ angular.module("app").directive('agJornal',['Jornal', function(Jornal) {
        console.log("guardando jornal"+JSON.stringify(scope.jornal));
        scope.jornal.$save(
          function(e){
-           if(scope.nuevo)
-            scope.jornales[scope.trabajador]=e;
+           scope.jornal=scope.jornales[scope.trabajador]=e;
            scope.editando=false;
            scope.color=colors[2];
+           nuevoJornal=false;
          },
          function(e){
            scope.color=colors[1];

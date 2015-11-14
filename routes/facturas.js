@@ -59,11 +59,7 @@ router.post('/', function(req, res, next) {
     return;
   }
   factura.save(function(err,fac) {
-    if (err){
-      debug(JSON.stringify(err));
-      errores.tratarError(err,res,next);
-      return;
-    }
+    if (err)return next(err);
     debug('factura guardada');
     res.json(fac);
 
