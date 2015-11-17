@@ -1,4 +1,4 @@
-var app = angular.module("app", ['ngRoute','ngResource','clientesServices','empleadosServices','ngSanitize','ui.bootstrap']);
+var app = angular.module("app", ['ngRoute','ngResource','clientesServices','dialogosServices', 'empleadosServices','ngSanitize','ui.bootstrap']);
 var viewsDir='/app/views/';
 app.config(['$routeProvider', function($routeProvider) {
    $routeProvider.

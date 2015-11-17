@@ -1,44 +1,10 @@
 var app = angular.module("app");
-app.directive('contenteditable', function() {
-  return {
-    restrict: 'A', // only activate on element attribute
-    require: '?ngModel', // get a hold of NgModelController
-    link: function(scope, element, attrs, ngModel) {
-      if(!ngModel) return; // do nothing if no ng-model
 
-      var brRexp = /^.*<br>$/i;
-      // Specify how UI should be updated
-      ngModel.$render = function() {
-        element.html(ngModel.$viewValue || '');
-      };
-
-      // Listen for change events to enable binding
-      element.on('blur keyup change', function() {
-        scope.$apply(read);
-      });
-      read(); // initialize
-
-      // Write data to the model
-      function read() {
-        var html = element.html();
-        // When we clear the content editable the browser leaves a <br> behind
-        // If strip-br attribute is provided then we strip this out
-        if( html == '<br>' ) {
-          html = '';
-        }
-        if(brRexp.test(html)){
-          html=html.substring(0,html.length-4);
-        }
-        ngModel.$setViewValue(html);
-      }
-    }
-  }
-});
-
-app.controller('facturaController', ['$scope', '$http', '$routeParams', 'Factura', 'Empresa',
-  function ($scope, $http, $routeParams, Factura, Empresa) {
+app.controller('facturaController', ['$scope', '$http', '$routeParams', 'Factura', 'Empresa', 'Dialogo',
+  function ($scope, $http, $routeParams, Factura, Empresa, Dialogo) {
     var id=$routeParams.id;
     var facturaNueva=false;
+    var dialogo=new Dialogo();
     $scope.nuevoConcepto={};
     var inicializaFactura=function(){
       facturaNueva=true;
@@ -86,14 +52,32 @@ app.controller('facturaController', ['$scope', '$http', '$routeParams', 'Factura
       }
     };
     $scope.guardar=function(){
-      if($scope.factura.conceptos.length==0) return;
+      if($scope.factura.conceptos.length==0) {
+        dialogo.alert("Debe insertar algo");
+        return;
+      }
       if(facturaNueva){
-        $scope.factura.$save(function(f){
-          facturaNueva=false;
-        });
+        $scope.factura.$save(
+          function(f){
+            facturaNueva=false;
+          },
+          function(err){
+            if(err.data.msg)
+              dialogo.alert(err.data.msg);
+          }
+        );
       }
       else{
-        $scope.factura.$update();
+        $scope.factura.$update(
+          function(f){
+
+          },
+          function(err){
+            console.log(err);
+            if(err.data.msg)
+              dialogo.alert(err.data.msg);
+          }
+        );
       }
     }
     $scope.tipoDocumento=function(doc){
