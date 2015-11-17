@@ -7,6 +7,7 @@
         <td>Fecha</td>
         <td>Cliente</td>
         <td>Total</td>
+        <td></td>
       </tr>
     </thead>
     <tdody>
@@ -15,6 +16,7 @@
         <td>{{ fac.fecha| date: "dd/MM/yyyy" }}</td>
         <td>{{ fac.cliente.nombre }}</td>
         <td>{{ fac.total| number: 2 }} €</td>
+        <td ><a class="btn btn-primary" href="#/factura/{{fac._id}}"><span class="glyphicon glyphicon-info-sign"></span></a></td>
       </tr>
     </tbody>
   </table>
