@@ -12,10 +12,8 @@ var app = express();
 
 
 //Conexion a la bd
-var mongodb_connection_string = 'mongodb://127.0.0.1:27017/agricola';
-if(process.env.OPENSHIFT_MONGODB_DB_URL){
-  mongodb_connection_string = process.env.OPENSHIFT_MONGODB_DB_URL + db_name;
-}
+var db_name=process.env.OPENSHIFT_APP_NAME || "agricola";
+mongodb_connection_string = (process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://127.0.0.1:27017/' )+ db_name;
 mongoose.connect(mongodb_connection_string);
 
 // view engine setup
@@ -44,11 +42,16 @@ app.use(session({
     maxAge: 24*60*60*1000
   },
   rolling:true,
-  store: new mongoStore({
+  store: new mongoStore(
+    /*
+    {
     db: 'sesiones_bigagro',
     host: '127.0.0.1',
     port: 27017
-  })
+    }
+    */
+    { mongooseConnection: mongoose.connection }
+  )
 }));
 ///////////////////////////////////////////////////////////////////////////
 //
