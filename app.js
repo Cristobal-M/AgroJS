@@ -10,8 +10,13 @@ var nunjucks  = require('nunjucks');
 var mongoStore = require('connect-mongo')(session);
 var app = express();
 
+
 //Conexion a la bd
-mongoose.connect('mongodb://localhost/agricola');
+var mongodb_connection_string = 'mongodb://127.0.0.1:27017/agricola';
+if(process.env.OPENSHIFT_MONGODB_DB_URL){
+  mongodb_connection_string = process.env.OPENSHIFT_MONGODB_DB_URL + db_name;
+}
+mongoose.connect(mongodb_connection_string);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
