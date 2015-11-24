@@ -125,6 +125,28 @@ router.post('/:id/fincas', function(req, res, next) {
   });
 });
 
+router.put('/:idCliente/fincas/idFinca', function(req, res, next) {
+  var idCliente=req.params.idCliente;
+  var idFinca=req.params.idFinca;
+  debug('Peticion para finca idCliente='+idCliente+' idFinca='+idFinca);
+  Cliente.getById(idCliente, function(err, cliente) {
+    if (err) return next(err);
+    var finca=cliente.fincas.id(idFinca);
+    var fincaNueva=req.body;
+    if(finca){
+      debug('La finca se editara');
+      finca.set(fincaNueva);
+      cliente.save(function(err) {
+        if (err){
+          debug(JSON.stringify(err));
+          return next(err);
+        }
+        debug('finca guardada correctamente id='+finca._id);
+        res.json(finca);
+      });
+    }
+  });
+});
 
 
 

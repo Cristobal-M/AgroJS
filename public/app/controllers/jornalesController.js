@@ -43,7 +43,9 @@ app.controller('jornalesController', ['$scope', '$http', 'Jornal', 'Temporada', 
       console.log(idC);
       $scope.fincas=Finca.query({'idCliente': idC});
     }
-
+    $scope.actualizarTemporadas=function(temps){
+      angular.copy(temps, $scope.temporadas);
+    };
     $scope.getJornales=function(){
       /*
       var jornalesDia= Jornal.query(

@@ -15,7 +15,7 @@ router.get('/', function(req, res, next) {
 //Operacion de login
 router.post('/', function(req, res, next) {
   seguridad.login(req, function(err, valido){
-    if(err) throw err;
+    if(err) return next(err);
     if(valido)
       res.redirect('/');
     else

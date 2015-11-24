@@ -14,9 +14,10 @@ clientesServices.factory('Cliente', ['$resource',
 clientesServices.factory('Finca', ['$resource',
   function($resource){
     //Para realizar una busqueda, de los que haya una coincidencia con el nombre y apellidos o dni
-    return $resource('/clientes/:idCliente/fincas', {},
+    return $resource('/clientes/:idCliente/fincas/:idFinca', {idFinca:'@_id'},
       { query: {method:'GET', isArray:true},
-        save: {method:'POST'}
+        save: {method:'POST'},
+        update: {method:'PUT'}
         }
     );
   }
@@ -24,8 +25,10 @@ clientesServices.factory('Finca', ['$resource',
 
 clientesServices.factory('Factura', ['$resource',
   function($resource){
-    function success(res){
-      alert("Factura guardada");
+    function successGet(res){
+      res.resource.fecha=new Date(res.data.fecha);
+      //console.log("fecha de factura cambiada por objeto Date "+JSON.stringify(res));
+      return res;
     };
     function error(res){
       if(res.data.msg){
@@ -37,7 +40,7 @@ clientesServices.factory('Factura', ['$resource',
       { query: {method:'GET', isArray:true},
         save: {method:'POST'   /*, interceptor:{response: success, responseError: error}*/ },
         update: {method:'PUT'  /*, interceptor:{response: success, responseError: error}*/ },
-        get: {method:'GET'}
+        get: {method:'GET', interceptor:{response: successGet, responseError: error}}
       }
     );
   }
@@ -47,7 +50,7 @@ clientesServices.factory('Empresa', ['$resource',
   function($resource){
     return $resource('/empresa', {},
       { get: {method:'GET', isArray:false},
-        save: {method:'POST'}
+        save: {method:'POST'},
       }
     );
   }
@@ -59,9 +62,10 @@ var empleadosServices = angular.module('empleadosServices', ['ngResource']);
 
 empleadosServices.factory('Empleado', ['$resource',
   function($resource){
-    return $resource('/empleados/:id', {id: ''},
+    return $resource('/empleados/:id', {id:'@_id'},
       { query: {method:'GET', isArray:true},
-        get: {method:'GET'}
+        get: {method:'GET'},
+        update: {method:'PUT'}
       }
     );
   }
@@ -89,58 +93,14 @@ empleadosServices.factory('Jornal', ['$resource',
 
 empleadosServices.factory('Temporada', ['$resource',
   function($resource){
-    return $resource('/jornales/temporadas', {},
+    return $resource('/jornales/temporadas/:id', {id: "@_id"},
       { query: {method:'GET', isArray:true},
-        get: {method:'GET'}
+        get: {method:'GET'},
+        update: {method:'PUT'},
       }
     );
   }
 ]);
-/*
-//Usa bootbox
-var dialogosServices = angular.module('dialogosServices', ['ngResource']);
-dialogosServices.factory('Dialogo',
-  function(){
-
-    //Texto a mostrar y funciones que se llaman si se cancela o acepta
-    return function(){
-      this.confirm=function(text, cbA, cbC){
-        bootbox.dialog({
-          message: text,
-          title: "Confirme",
-          buttons: {
-            cancel: {
-              label: "Cancelar",
-              className: "btn-default",
-              callback: cbC
-            },
-            main: {
-              label: "Aceptar",
-              className: "btn-primary",
-              callback: cbA
-            }
-          }
-        });
-      };
-
-      this.alert=function(text, cb){
-        cb=cb||function(){};
-        bootbox.dialog({
-          message: text,
-          title: "Aviso",
-          buttons:{
-            main: {
-              label: "Aceptar",
-              className: "btn-primary",
-              callback: cb
-            }
-          }
-        });
-      };
-    }
-  }
-);
-*/
 
 var dialogosServices = angular.module('dialogosServices', ['ngResource']);
 dialogosServices.factory('Dialogo',

@@ -25,6 +25,7 @@ app.controller('temporadasController', ['$scope', '$http', 'Temporada',
       tmp.$save(
         //Funcion para caso de exito
         function(e){
+          if($scope.actualizarTemporadas) $scope.actualizarTemporadas($scope.temporadas);
           if(cb){
             $scope.temporadas.push(e);
             cb();
@@ -41,13 +42,32 @@ app.controller('temporadasController', ['$scope', '$http', 'Temporada',
       console.log("guardar temporada terminado");
     };
 
+    $scope.actualizarTemporada=function(tmp, cb){
+      console.log(JSON.stringify(tmp));
+      tmp.$update(
+        //Funcion para caso de exito
+        function(e){
+          if($scope.actualizarTemporadas) $scope.actualizarTemporadas($scope.temporadas);
+          if(cb) cb();
+        },
+        //Funcion en Error
+        function(err){
+          if(err.status==400){
+             alert(err.data.msg);
+          }
+          console.log(JSON.stringify(err));
+        }
+      );
+      console.log("guardar temporada terminado");
+    };
+
     $scope.guardarTemporadaPuestos=function(p, cb){
       console.log(JSON.stringify(p));
       $scope.temporadaSeleccionada.puestos.push(p);
-      $scope.temporadaSeleccionada.$save(
+      $scope.temporadaSeleccionada.$update(
         //Funcion para caso de exito
         function(e){
-
+          if($scope.actualizarTemporadas) $scope.actualizarTemporadas($scope.temporadas);
           //angular.copy(e, $scope.temporadaSeleccionada);
           if(cb){
             cb();

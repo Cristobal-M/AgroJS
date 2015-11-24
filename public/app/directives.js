@@ -6,7 +6,7 @@
       datosCol: '=agCol',
       datos: '=ngModel',
       save: '=agOnSave',
-      editable: '@agEditable',
+      update: '=agOnUpdate',
       //Constructor para un nuevo elemento
       constructor: '=agConstructor',
       //Botones mostrados al final de cada fila, {fn: <funcion a ejecutar con ng-click funcion(elemento)>, title: <titulo>, content:<contenido del tag button>}
@@ -16,7 +16,7 @@
       scope.backup={};
       scope.nuevo={};
       scope.editando=false;
-      scope.editable=(scope.editable===undefined)? false : scope.editable;
+      scope.editable=(scope.update===undefined)? false : true;
       if(scope.constructor!==undefined){
         scope.nuevosElementos=true;
         scope.nuevo=new scope.constructor();
@@ -45,7 +45,7 @@
       scope.guardar=function(e){
         delete e.editando;
         scope.editando=false;
-        scope.save(e);
+        scope.update(e);
         console.log("callback save");
       }
 
@@ -64,7 +64,7 @@
           <thead> \
             <tr> \
               <th ng-repeat="col in datosCol">{{col.name}}</th> \
-              <th class="col-md-1"></th> \
+              <th></th> \
             </tr> \
           </thead> \
             <tbody> \
@@ -77,7 +77,7 @@
                     <td> \
                       <div ng-hide="editando && !dat.editando" style="display:inline"> \
                         <button ng-hide="dat.editando" ng-repeat="b in buttons" class="btn" ng-click="b.fn(dat)" title="b.title" ng-bind-html="html(b.content)"></button> \
-                        <button ng-show="editable" class="btn" ng-click="editar(dat)"><span class="glyphicon glyphicon-pencil"></span></button> \
+                        <button ng-show="!dat.editando && editable" class="btn" ng-click="editar(dat)"><span class="glyphicon glyphicon-pencil"></span></button> \
                       </div>\
                       <div ng-show="dat.editando" style="display:inline"> \
                         <button class="btn" ng-click="guardar(dat)"><span class="glyphicon glyphicon-floppy-saved"></span></button> \

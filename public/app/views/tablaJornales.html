@@ -2,6 +2,8 @@
   <h1 style="display:inline;margin-right:50px">Jornales</h1>
 
 <!--############################################################################################-->
+<!--############################ TEMPORADAS ####################################################-->
+<!--############################################################################################-->
 <div ng-controller="temporadasController">
   <button class="btn btn-primary" data-toggle="modal" data-target="#dialogoTemporadas">
     Temporadas
@@ -16,9 +18,9 @@
           <h4 class="modal-title">Temporadas</h4>
         </div>
         <div class="modal-body">
-          <!--############################### FORMULARIO CLIENTE ###################################### -->
-          <ag-tabla-datos ag-col="infoTablaTemporadas" ng-model="temporadas" ag-constructor="Temporada" ag-on-save="guardarTemporada" ag-buttons="botonesTablaTemporadas"></ag-tabla-datos>
-          <!--############################### FIN FORMULARIO ###################################### -->
+          <!--############################### TEMPORADAS ###################################### -->
+          <ag-tabla-datos ag-col="infoTablaTemporadas" ng-model="temporadas" ag-constructor="Temporada" ag-on-save="guardarTemporada" ag-on-update="actualizarTemporada" ag-buttons="botonesTablaTemporadas"></ag-tabla-datos>
+          <!--############################### FIN ###################################### -->
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>

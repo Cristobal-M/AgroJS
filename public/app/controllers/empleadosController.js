@@ -20,10 +20,8 @@ app.controller('listaEmpleadosController', ['$scope', '$http', 'Empleado',
       f.$save(
         //Funcion para caso de exito
         function(e){
-          if(cb){
-            $scope.empleados.push(f);
-            cb();
-          }
+          $scope.empleados.push(f);
+          if(cb) cb();
         },
         //Funcion en Error
         function(err){
@@ -34,6 +32,23 @@ app.controller('listaEmpleadosController', ['$scope', '$http', 'Empleado',
         }
       );
       console.log("guardar empleado terminado");
+    }
+
+    $scope.actualizarEmpleado=function(f){
+      console.log(JSON.stringify(f));
+      f.$update(
+        //Funcion para caso de exito
+        function(e){
+          console.log("actualizar empleado terminado");
+        },
+        //Funcion en Error
+        function(err){
+          if(err.status==400){
+             alert(err.data.msg);
+          }
+          console.log(JSON.stringify(err));
+        }
+      );
     }
   }]);
 

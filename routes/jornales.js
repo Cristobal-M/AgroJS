@@ -80,29 +80,27 @@ router.get('/temporadas', function(req, res, next) {
 
 router.post('/temporadas', function(req, res, next) {
   debug('guardado de una temporada solicitada'+JSON.stringify(req.body));
-  var id=req.body._id;
-  if(id!==undefined){
-    debug('la temporada ya existe se editara');
-    Temporada.findOne({},function(err, temp) {
-      if (err) return next(err);
-      temp.set(req.body);
-      temp.save(function(err, jornal) {
-        if (err) return next(err);
-        debug('temporada editado');
-        res.json(temp);
+  var temp=new Temporada(req.body);
+  temp.save(function(err) {
+    if (err) return next(err);
+    debug('temporada guardado');
+    res.json(temp);
+  });
+});
 
-      });
-    });
-  }
-  else{
-    debug('la temporada no existe se crea uno nuevo');
-    temp.save(function(err) {
-    var temp=new Temporada(req.body);
+router.put('/temporadas/:id', function(req, res, next) {
+  debug('guardado de una temporada solicitada'+JSON.stringify(req.body));
+  var id=req.params.id;
+  debug('la temporada ya existe se editara');
+  Temporada.findOne({"_id": id},function(err, temp) {
+    if (err) return next(err);
+    temp.set(req.body);
+    temp.save(function(err, jornal) {
       if (err) return next(err);
-      debug('temporada guardado');
+      debug('temporada editado');
       res.json(temp);
     });
-  }
+  });
 });
 
 router.delete('/', function(req, res, next) {

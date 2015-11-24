@@ -23,7 +23,7 @@
                   <td class="hidden-xs">{{ cliente.direccion}}</td>
                   <td>{{ cliente.telefono}}</td>
                   <td>{{ cliente.email}}</td>
-                  <td><button class="btn btn-primary" ng-click="seleccionarCliente(cliente)" data-toggle="modal" data-target="#dialogoFincas">Fincas</button></td>
+                  <td><button class="btn btn-primary" ng-click="cargarFincas(cliente)" data-toggle="modal" data-target="#dialogoFincas">Fincas</button></td>
                   <td><button class="btn btn-primary" ng-click="seleccionarCliente(cliente)" data-toggle="modal" data-target="#dialogoCliente">Editar</button></td>
                   <!--td><i class="fa fa-lg fa-cart-plus" ng-click="nuevaVenta($event,cliente)" ></i></td>
                   <td><i class="fa fa-lg fa-file-text" ng-click="mostrarObservaciones($event,cliente)"></i></td>
@@ -104,7 +104,7 @@
       </div>
       <div class="modal-body">
         <!--############################### FORMULARIO CLIENTE ###################################### -->
-        <ag-tabla-datos ag-col="infoTablaFincas" ng-model="clienteSeleccionado.fincas" ag-constructor="constructorFinca" ag-on-save="guardarFinca"></ag-tabla-datos>
+        <ag-tabla-datos ag-col="infoTablaFincas" ng-model="clienteSeleccionado.fincas" ag-constructor="constructorFinca" ag-on-save="guardarFinca" ag-on-update="actualizarFinca"></ag-tabla-datos>
         <!--############################### FIN FORMULARIO ###################################### -->
       </div>
       <div class="modal-footer">

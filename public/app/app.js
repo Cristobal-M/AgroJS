@@ -50,48 +50,60 @@ callback se le llamara cuando sea la creacion de uno nuevo y la respuesta al $sa
 se considera nuevo si se llama a seleccionar sin argumentos
 */
 function factoriaEdicion(E,callback,error){
-  var vacio=new E();
-  var original=null;
-  var copia=null;
-
-  var seleccionar= function(elemento){
-    if(elemento!=undefined){
-      original= elemento;
-      copia = angular.copy(elemento);
+  this.vacio=new E();
+  this.original=null;
+  this.copia=null;
+  var that=this;
+  this.seleccionar= function(elemento){
+    if(elemento){
+      this.original= elemento;
+      this.copia = angular.copy(elemento);
+      this.nuevo=false;
     }
     else{
-      original= null;
-      copia = angular.copy(vacio);
+      this.original= null;
+      this.copia = angular.copy(this.vacio);
+      this.nuevo=true;
     }
-    return copia;
+    return this.copia;
   };
 
-  var guardar= function(idDialogo){
-    copia.$save(
-      //Funcion para caso de exito
-      function(e){
-        if(original!=null){
-          angular.copy(e, original);
-          callback(false,e)
-        }
-        else {
-          callback(true,e)
-        }
-        if(idDialogo!=undefined)
-          $(idDialogo).modal('hide');
-      },
-      //Funcion en Error
-      function(err){
-        if(error!=undefined){
-          error(err);
-          return;
-        }
-        else if(err.status==400){
-           alert(err.data.msg);
-        }
-        console.log(JSON.stringify(err));
+  this.guardar= function(idDialogo){
+    function funcionError(err){
+      if(error!=undefined){
+        error(err);
+        return;
       }
-    );
+      else if(err.status==400){
+         alert(err.data.msg);
+      }
+      console.log(JSON.stringify(err));
+    };
+
+    var nuevo=this.original===null;
+    var that=this;
+    if(nuevo){
+      this.copia.$save(
+        //Funcion para caso de exito
+        function(e){
+          angular.copy(e, that.original);
+          callback(true,e)
+          if(idDialogo!=undefined)
+            $(idDialogo).modal('hide');
+        },
+        //Funcion en Error
+        funcionError
+      );
+    }
+    else{
+      this.copia.$update(
+        function(e){
+          callback(false,e);
+          if(idDialogo!=undefined)
+            $(idDialogo).modal('hide');
+        },
+        funcionError
+      );
+    }
   };
-  return {'guardar': guardar, 'seleccionar': seleccionar};
 };

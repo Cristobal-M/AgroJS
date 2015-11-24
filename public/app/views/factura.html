@@ -1,10 +1,24 @@
 <div id="imprimir">
   <h1 style="display:inline;margin-right:50px">Factura</h1>
-
+  <div class="row">
+    <div class=" col-md-2 col-xs-4">
+      <div class="input-group">
+        <span class="input-group-addon">Fecha</span>
+        <input class="form-control" type="date" ng-model="factura.fecha"
+         placeholder="yyyy-MM-dd" />
+      </div>
+    </div>
+    <div class=" col-md-2 col-xs-4">
+      <div class="input-group">
+        <span class="input-group-addon">Numero</span>
+        <input class="form-control" type="date" value="{{factura.num}}" disabled="true" style="text-align:right"/>
+      </div>
+    </div>
+  </div>
       <!-- DATOS EMPRESA Y CLIENTE -->
       <div class="row">
         <!--#################### DATOS EMPRESA ##################-->
-        <div class="col-md-3 col-xs-4 datosContacto" >
+        <div class="col-md-3 col-xs-5 datosContacto" >
           <div class="col-md-12"><h4 class="factura">Empresa</h4></div>
           <table class="table table-stripped">
             <tr>
@@ -28,7 +42,7 @@
         </div>
         <!--#################### FIN DATOS EMPRESA ##################-->
         <!--#################### DATOS CLIENTE ##################-->
-        <div class="col-md-3 col-md-offset-6 col-xs-4 col-xs-offset-4 datosContacto">
+        <div class="col-md-3 col-md-offset-6 col-xs-5 col-xs-offset-2 datosContacto">
           <div class="col-md-12"><h4 class="factura">Cliente</h4></div>
             <table class="table table-stripped col-md-12">
               <tr>

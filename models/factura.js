@@ -25,7 +25,7 @@ var facturaSchema = new Schema({
   num: {type : Number},
   iva: {type : Number},
   fecha: {type : Date, required: true},
-  fechaCreacion: {type : Date, default: Date.now},
+  fecha_creacion: {type : Date, default: Date.now},
   total: {type : Number},
   conceptos: [{
     codigo: String,
@@ -42,7 +42,55 @@ var facturaSchema = new Schema({
   }
 });
 
-facturaSchema.index({ year: 1, num: 1}, { unique: true });
+facturaSchema.index({ year: 1, num: 1}, { unique: true, sparse: true });
+
+//Funcion para reparar la numeracion de las facturas de un año si se han introducido con una fecha distinta
+facturaSchema.statics.reordenar= function(year, next){
+  var ini = new Date(Date.UTC(year, 0, 1));
+  var fin = new Date(Date.UTC(year+1, 0, 1));
+  debug("se reordenaran las facturas "+ini+" "+fin);
+  var that=this;
+  //Ponemos los num a null
+  this.update({fecha: {$gte: ini, $lt: fin}}, {'year': year, 'num': null}, { multi: true }, function(err){
+    if(err) return next (err);
+    that.find({fecha: {$gte: ini, $lt: fin}}).sort('fecha').exec(function(err,facturas){
+      if(err) return next(err);
+      debug("Facturas obtenidas"+ facturas.length+"=>"+JSON.stringify(facturas));
+      var c=0;
+      var res=[];
+      var size=facturas.length;
+      for (var i = 0; i < size; i++) {
+        facturas[i].num=i+1;
+        facturas[i].save(function(err, fac){
+          debug("procesando factura nº"+fac.num);
+          if(size>c){
+            c++;
+            if(err){
+              debug("error se cancela");
+              c=size+1;
+              return next(err);
+            }
+            res.push(fac);
+            //Si es el ultimo, se llama a next
+            if(size==c){
+              debug("se actualizara el contador");
+              contadorFactura.findOne({'year': year}).exec().then(
+              function(contador){
+                debug("contador a "+size);
+                contador.num=size;
+                return contador.save();
+              })
+              .then(function(contador){
+                debug("devolucion de respuesta");
+                next(false, res);
+              });
+            }
+          }
+        });
+      }
+    });
+  });
+}
 
 //Comprobar que es valido, creo que es mejor para obtener mensajes de error
 facturaSchema.methods.invalido= function(){
@@ -119,6 +167,7 @@ facturaSchema.pre('save', function (next) {
     return;
   }
   var fecha=moment(this.fecha);
+  this.fecha_creacion=new Date();
   var fac=this;
   debug("Se va a generar el numero");
   contadorFactura.generarNumero(fecha.year(), function(err,numero){
@@ -134,6 +183,7 @@ facturaSchema.pre('save', function (next) {
 
 facturaSchema.virtual('numero')
 .get(function () {
+  if(!this.num) return "";
   var num=this.num.toString();
   return this.year+"-"+("00000".slice(num.length))+num;
 });

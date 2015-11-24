@@ -4,27 +4,21 @@ app.controller('listaClientesController', ['$scope', '$http','Cliente','Finca',
 
     $scope.clientes=Cliente.query();
 
-    var edicion=factoriaEdicion(Cliente,function(nuevo, cli){
+    var edicion=new factoriaEdicion(Cliente,function(nuevo, cli){
       if(nuevo)
         $scope.clientes.push(cli);
-
     });
 
     $scope.seleccionarCliente=function(cli){
       $scope.clienteSeleccionado= edicion.seleccionar(cli);
-      $scope.clienteSeleccionado.fincas=Finca.query({'idCliente': cli._id});
-      /*
-      $scope.clienteSeleccionado.fincas=Finca.query({'idCliente': cli._id}, function(fincas){
-        fincas[0].nombre="POZO";
-        fincas[0].$save({'idCliente': cli._id});
-      });
-      */
     };
-    $scope.guardarCliente=edicion.guardar;
+    $scope.guardarCliente=function(idDialogo){
+      edicion.guardar(idDialogo);
+    };
     $scope.constructorFinca=Finca;
     $scope.cargarFincas=function(cli){
       $scope.clienteSeleccionado=cli;
-      cli.fincas=Finca.query({'idCliente': cli_id});
+      cli.fincas=Finca.query({'idCliente': cli._id});
     }
 
     $scope.infoTablaFincas=[{name:'Nombre', var:'nombre'},{name:'Direccion', var:'direccion'}];
@@ -47,6 +41,24 @@ app.controller('listaClientesController', ['$scope', '$http','Cliente','Finca',
         }
       );
       console.log("guardar finca terminado");
+    }
+
+    $scope.actualizarFinca=function(f, cb){
+      console.log(JSON.stringify(f));
+      f.$update({'idCliente': $scope.clienteSeleccionado._id},
+        //Funcion para caso de exito
+        function(e){
+          if(cb) cb();
+          console.log("actualizar finca terminado");
+        },
+        //Funcion en Error
+        function(err){
+          if(err.status==400){
+             alert(err.data.msg);
+          }
+          console.log(JSON.stringify(err));
+        }
+      );
     }
   }]);
   //Objeto que contiene dos funciones para trabajar con edicion y guardado, y una variable al objeto que se editar

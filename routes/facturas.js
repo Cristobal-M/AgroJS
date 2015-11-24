@@ -85,4 +85,12 @@ router.put('/:id', function(req, res, next){
   });
 });
 
+router.get('/reordenar/:year', function(req, res, next){
+  //res.json({ok:false, msg:"Sin implementar"});
+  Factura.reordenar(req.params.year,function(err,facturas){
+    if(err) return next(err);
+    res.json(facturas);
+  });
+});
+
 module.exports = router;
